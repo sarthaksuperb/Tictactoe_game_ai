@@ -1,6 +1,6 @@
-# 🪐 Cyber Neon Tic-Tac-Toe (Hybrid CSS Engine)
+# 🪐 sarthak's tic tac
 
-An ultra-premium, interactive, and responsive Tic-Tac-Toe game featuring three high-fidelity theme skins, a 3D perspective hover-tilt effect, and an unbeatable AI opponent.
+An ultra-premium, interactive, and responsive tic tac game featuring three high-fidelity theme skins, a 3D perspective hover-tilt effect, and an unbeatable AI opponent.
 
 👉 **[Play the Live Demo Here!](https://sarthaksuperb.github.io/Tictactoe_game_ai/)**
 

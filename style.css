@@ -25,9 +25,11 @@
 
 /* Theme 2: Retro Arcade (Matrix / Fallout Green & Amber) */
 body:has(#theme-retro:checked) {
-  --cyan: #39ff14; /* Matrix Neon Green */
+  --cyan: #39ff14;
+  /* Matrix Neon Green */
   --cyan-rgb: 57, 255, 20;
-  --pink: #ffb000; /* Amber Yellow */
+  --pink: #ffb000;
+  /* Amber Yellow */
   --pink-rgb: 255, 176, 0;
   --neutral-glow: #7f9f7f;
   --bg-dark: #050705;
@@ -42,9 +44,11 @@ body:has(#theme-retro:checked) {
 
 /* Theme 3: Aurora Light (Glassmorphic Light Mode) */
 body:has(#theme-aurora:checked) {
-  --cyan: #6c5ce7; /* Lilac */
+  --cyan: #6c5ce7;
+  /* Lilac */
   --cyan-rgb: 108, 92, 231;
-  --pink: #e84393; /* Berry */
+  --pink: #e84393;
+  /* Berry */
   --pink-rgb: 232, 67, 147;
   --neutral-glow: #636e72;
   --bg-dark: #edf2f9;
@@ -93,9 +97,9 @@ input[type="radio"],
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: 
-    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
-    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px);
+  background-image:
+    radial-gradient(white, rgba(255, 255, 255, .2) 2px, transparent 40px),
+    radial-gradient(white, rgba(255, 255, 255, .15) 1px, transparent 30px);
   background-size: 550px 550px, 350px 350px;
   background-position: 0 0, 40px 60px;
   opacity: 0.12;
@@ -105,7 +109,8 @@ input[type="radio"],
 }
 
 body:has(#theme-aurora:checked) .stars-bg {
-  opacity: 0; /* Hide stars in light theme */
+  opacity: 0;
+  /* Hide stars in light theme */
 }
 
 /* Retro Scanlines (CRT screen effect) */
@@ -115,10 +120,8 @@ body:has(#theme-aurora:checked) .stars-bg {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    rgba(18, 16, 16, 0) 50%, 
-    rgba(0, 0, 0, 0.25) 50%
-  );
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%,
+      rgba(0, 0, 0, 0.25) 50%);
   background-size: 100% 4px;
   z-index: 99;
   opacity: 0;
@@ -131,9 +134,17 @@ body:has(#theme-retro:checked) .retro-scanlines {
 }
 
 @keyframes flicker {
-  0% { opacity: 0.15; }
-  50% { opacity: 0.13; }
-  100% { opacity: 0.17; }
+  0% {
+    opacity: 0.15;
+  }
+
+  50% {
+    opacity: 0.13;
+  }
+
+  100% {
+    opacity: 0.17;
+  }
 }
 
 /* Radial Backdrop Glow */
@@ -224,6 +235,16 @@ body:has(#theme-retro:checked) .main-title {
   width: 240px;
 }
 
+.difficulty-switcher {
+  display: none;
+  width: 320px;
+  margin-top: 10px;
+}
+
+body:has(#mode-ai:checked) .difficulty-switcher {
+  display: flex;
+}
+
 body:has(#theme-aurora:checked) .theme-switcher,
 body:has(#theme-aurora:checked) .mode-switcher {
   background: rgba(0, 0, 0, 0.03);
@@ -261,7 +282,12 @@ body:has(#theme-retro:checked) .mode-lbl {
   background: linear-gradient(90deg, rgba(var(--cyan-rgb), 0.2), rgba(var(--pink-rgb), 0.2));
   border: 1px solid rgba(var(--cyan-rgb), 0.3);
   z-index: 1;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* smoother movement: animate transform instead of left/width */
+  left: 0;
+  transform: translateX(0px);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
 }
 
 body:has(#theme-retro:checked) .switcher-slider,
@@ -275,6 +301,7 @@ body:has(#theme-aurora:checked) .mode-slider {
   background: rgba(108, 92, 231, 0.1);
   border: 1px solid var(--cyan);
 }
+
 
 /* Theme label active coloring */
 body:has(#theme-cyberpunk:checked) .lbl-cyberpunk,
@@ -292,28 +319,263 @@ body:has(#mode-ai:checked) .lbl-ai {
 }
 
 body:has(#theme-cyberpunk:checked) .switcher-slider {
-  left: 4px;
+  transform: translateX(4px);
   width: 78px;
 }
 
 body:has(#theme-retro:checked) .switcher-slider {
-  left: 85px;
+  transform: translateX(85px);
   width: 80px;
 }
 
 body:has(#theme-aurora:checked) .switcher-slider {
-  left: 167px;
+  transform: translateX(167px);
   width: 78px;
 }
 
 body:has(#mode-2p:checked) .mode-slider {
-  left: 4px;
+  transform: translateX(4px);
   width: 110px;
 }
 
 body:has(#mode-ai:checked) .mode-slider {
-  left: 118px;
+  transform: translateX(118px);
   width: 118px;
+}
+
+
+/* Difficulty labels styling */
+.difficulty-lbl {
+  position: relative;
+  flex: 1;
+  text-align: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 8px 0;
+  cursor: pointer;
+  z-index: 3;
+  color: var(--neutral-glow);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  letter-spacing: 1px;
+  overflow: hidden;
+}
+
+.difficulty-lbl::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.difficulty-lbl:hover::before {
+  transform: translateX(100%);
+}
+
+body:has(#mode-ai:checked) .difficulty-lbl {
+  font-size: 0.7rem;
+  padding: 6px 0;
+}
+
+/* Difficulty label hover effects */
+.difficulty-lbl:hover {
+  color: var(--text-color);
+  text-shadow: 0 0 15px currentColor;
+  transform: translateY(-3px) scale(1.02);
+}
+
+/* Difficulty label active state */
+body:has(#mode-ai:checked):has(#diff-easy:checked) .lbl-easy,
+body:has(#mode-ai:checked):has(#diff-medium:checked) .lbl-medium,
+body:has(#mode-ai:checked):has(#diff-hard:checked) .lbl-hard,
+body:has(#mode-ai:checked):has(#diff-expert:checked) .lbl-expert {
+  color: var(--text-color);
+  text-shadow: 0 0 20px currentColor, 0 0 30px currentColor;
+  transform: translateY(-3px) scale(1.08);
+  animation: pulse-active 2s ease-in-out infinite;
+}
+
+@keyframes pulse-active {
+
+  0%,
+  100% {
+    text-shadow: 0 0 20px currentColor, 0 0 30px currentColor;
+  }
+
+  50% {
+    text-shadow: 0 0 30px currentColor, 0 0 45px currentColor;
+  }
+}
+
+/* Difficulty slider styling (silver + transform-driven) */
+.difficulty-slider {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  border-radius: 50px;
+  left: 0;
+
+  /* silver kept */
+  background: linear-gradient(90deg, rgba(210, 210, 220, 0.18), rgba(240, 240, 245, 0.08));
+  border: 1px solid rgba(220, 220, 230, 0.25);
+
+  z-index: 1;
+  transform: translateX(4px);
+  transition:
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+
+  will-change: transform;
+
+  box-shadow:
+    0 0 10px rgba(210, 210, 220, 0.22),
+    inset 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+body:has(#mode-ai:checked) .difficulty-slider {
+  display: block;
+  animation: slider-glow 3s ease-in-out infinite;
+}
+
+@keyframes slider-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(var(--cyan-rgb), 0.3), inset 0 0 10px rgba(255, 255, 255, 0.1);
+  }
+
+  50% {
+    box-shadow: 0 0 20px rgba(var(--cyan-rgb), 0.5), inset 0 0 15px rgba(255, 255, 255, 0.2);
+  }
+}
+
+.difficulty-slider::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  right: 2px;
+  border-radius: 50px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transform: translateX(-100%);
+  animation: slider-shine 2s ease-in-out infinite;
+}
+
+@keyframes slider-shine {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Difficulty label active coloring with smooth transitions */
+body:has(#mode-ai:checked) .lbl-easy {
+  color: #4ade80;
+  text-shadow: 0 0 8px #4ade80;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body:has(#mode-ai:checked) .lbl-medium {
+  color: #fbbf24;
+  text-shadow: 0 0 8px #fbbf24;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body:has(#mode-ai:checked) .lbl-hard {
+  color: #f97316;
+  text-shadow: 0 0 8px #f97316;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body:has(#mode-ai:checked) .lbl-expert {
+  color: var(--cyan);
+  text-shadow: 0 0 8px var(--cyan);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Difficulty slider positioning with smooth animations (Silver) */
+body:has(#mode-ai:checked) .difficulty-slider {
+  left: 0;
+  transform: translateX(4px);
+  width: 78px;
+
+  /* silver background kept always */
+  background: linear-gradient(90deg, rgba(210, 210, 220, 0.18), rgba(240, 240, 245, 0.08));
+  border: 1px solid rgba(220, 220, 230, 0.25);
+
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+body:has(#mode-ai:checked):has(#diff-medium:checked) .difficulty-slider {
+  transform: translateX(85px);
+  width: 85px;
+}
+
+body:has(#mode-ai:checked):has(#diff-hard:checked) .difficulty-slider {
+  transform: translateX(170px);
+  width: 78px;
+}
+
+body:has(#mode-ai:checked):has(#diff-expert:checked) .difficulty-slider {
+  transform: translateX(250px);
+  width: 65px;
+}
+
+
+/* Difficulty slider hover effect */
+body:has(#mode-ai:checked) .difficulty-switcher:hover .difficulty-slider {
+  box-shadow:
+    0 0 25px rgba(var(--cyan-rgb), 0.6),
+    inset 0 0 15px rgba(255, 255, 255, 0.3);
+  transform: scaleY(1.1);
+}
+
+/* Difficulty switcher entrance animation */
+body:has(#mode-ai:checked) .difficulty-switcher {
+  animation: slide-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Selection feedback animation */
+body:has(#mode-ai:checked):has(#diff-easy:checked) .lbl-easy,
+body:has(#mode-ai:checked):has(#diff-medium:checked) .lbl-medium,
+body:has(#mode-ai:checked):has(#diff-hard:checked) .lbl-hard,
+body:has(#mode-ai:checked):has(#diff-expert:checked) .lbl-expert {
+  animation: select-pulse 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes select-pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.15);
+  }
+
+  100% {
+    transform: scale(1.08);
+  }
 }
 
 
@@ -379,14 +641,14 @@ body:has(#theme-aurora:checked) .score-star {
 }
 
 /* Player X score coloring */
-.player-x-box .score-cb:checked + .score-star {
+.player-x-box .score-cb:checked+.score-star {
   color: var(--cyan);
   text-shadow: 0 0 10px var(--cyan);
   transform: scale(1.15);
 }
 
 /* Player O score coloring */
-.player-o-box .score-cb:checked + .score-star {
+.player-o-box .score-cb:checked+.score-star {
   color: var(--pink);
   text-shadow: 0 0 10px var(--pink);
   transform: scale(1.15);
@@ -484,19 +746,34 @@ body:has(#theme-retro:checked) .turn-indicator {
   text-shadow: 0 0 8px rgba(var(--pink-rgb), 0.4);
 }
 
-.pulse-cyan, .pulse-pink {
+.pulse-cyan,
+.pulse-pink {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   animation: pulse-glow 1.2s infinite alternate;
 }
 
-.pulse-cyan { background-color: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
-.pulse-pink { background-color: var(--pink); box-shadow: 0 0 6px var(--pink); }
+.pulse-cyan {
+  background-color: var(--cyan);
+  box-shadow: 0 0 6px var(--cyan);
+}
+
+.pulse-pink {
+  background-color: var(--pink);
+  box-shadow: 0 0 6px var(--pink);
+}
 
 @keyframes pulse-glow {
-  0% { transform: scale(0.85); opacity: 0.5; }
-  100% { transform: scale(1.25); opacity: 1; }
+  0% {
+    transform: scale(0.85);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1.25);
+    opacity: 1;
+  }
 }
 
 
@@ -530,15 +807,41 @@ body:has(#theme-retro:checked) .turn-indicator {
 }
 
 /* 3D Tilt Logic using :has() relational selector */
-.board:has(.cell-1:hover) { transform: rotateX(6deg) rotateY(-6deg); }
-.board:has(.cell-2:hover) { transform: rotateX(6deg) rotateY(0deg); }
-.board:has(.cell-3:hover) { transform: rotateX(6deg) rotateY(6deg); }
-.board:has(.cell-4:hover) { transform: rotateX(0deg) rotateY(-6deg); }
-.board:has(.cell-5:hover) { transform: rotateX(0deg) rotateY(0deg); }
-.board:has(.cell-6:hover) { transform: rotateX(0deg) rotateY(6deg); }
-.board:has(.cell-7:hover) { transform: rotateX(-6deg) rotateY(-6deg); }
-.board:has(.cell-8:hover) { transform: rotateX(-6deg) rotateY(0deg); }
-.board:has(.cell-9:hover) { transform: rotateX(-6deg) rotateY(6deg); }
+.board:has(.cell-1:hover) {
+  transform: rotateX(6deg) rotateY(-6deg);
+}
+
+.board:has(.cell-2:hover) {
+  transform: rotateX(6deg) rotateY(0deg);
+}
+
+.board:has(.cell-3:hover) {
+  transform: rotateX(6deg) rotateY(6deg);
+}
+
+.board:has(.cell-4:hover) {
+  transform: rotateX(0deg) rotateY(-6deg);
+}
+
+.board:has(.cell-5:hover) {
+  transform: rotateX(0deg) rotateY(0deg);
+}
+
+.board:has(.cell-6:hover) {
+  transform: rotateX(0deg) rotateY(6deg);
+}
+
+.board:has(.cell-7:hover) {
+  transform: rotateX(-6deg) rotateY(-6deg);
+}
+
+.board:has(.cell-8:hover) {
+  transform: rotateX(-6deg) rotateY(0deg);
+}
+
+.board:has(.cell-9:hover) {
+  transform: rotateX(-6deg) rotateY(6deg);
+}
 
 /* Board Cells */
 .cell {
@@ -560,7 +863,8 @@ body:has(#theme-aurora:checked) .cell {
 .cell:hover {
   background: rgba(255, 255, 255, 0.04);
   border-color: rgba(255, 255, 255, 0.06);
-  transform: translateZ(10px); /* 3D pop depth */
+  transform: translateZ(10px);
+  /* 3D pop depth */
 }
 
 body:has(#theme-aurora:checked) .cell:hover {
@@ -595,7 +899,8 @@ body:has(#theme-aurora:checked) .cell:hover {
   font-family: var(--font-family-title), sans-serif;
   font-size: 3.2rem;
   font-weight: 700;
-  transform: translateZ(15px); /* Lift markers above cells */
+  transform: translateZ(15px);
+  /* Lift markers above cells */
   animation: pop-mark 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
 }
 
@@ -604,133 +909,411 @@ body:has(#theme-retro:checked) .mark {
 }
 
 @keyframes pop-mark {
-  0% { transform: scale(0.5) translateZ(0); opacity: 0; }
-  100% { transform: scale(1) translateZ(15px); opacity: 1; }
+  0% {
+    transform: scale(0.5) translateZ(0);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1) translateZ(15px);
+    opacity: 1;
+  }
+}
+
+@keyframes build-x {
+  0% {
+    stroke-dasharray: 50 50;
+    stroke-dashoffset: 100;
+    opacity: 0;
+    transform: translateZ(0) scale(0.8);
+  }
+
+  25% {
+    stroke-dasharray: 50 50;
+    stroke-dashoffset: 50;
+    opacity: 1;
+    transform: translateZ(10px) scale(1);
+  }
+
+  50% {
+    stroke-dasharray: 50 50;
+    stroke-dashoffset: 0;
+    opacity: 1;
+    transform: translateZ(15px) scale(1.02);
+  }
+
+  75% {
+    stroke-dasharray: 50 50;
+    stroke-dashoffset: 0;
+    opacity: 1;
+    transform: translateZ(15px) scale(1);
+  }
+
+  100% {
+    stroke-dasharray: 50 50;
+    stroke-dashoffset: 0;
+    opacity: 1;
+    transform: translateZ(15px) scale(1);
+  }
+}
+
+@keyframes build-o {
+  0% {
+    stroke-dasharray: 200 200;
+    stroke-dashoffset: 200;
+    opacity: 0;
+    transform: translateZ(0) scale(0.9);
+  }
+
+  50% {
+    stroke-dasharray: 200 200;
+    stroke-dashoffset: 100;
+    opacity: 1;
+    transform: translateZ(10px) scale(1);
+  }
+
+  75% {
+    stroke-dasharray: 200 200;
+    stroke-dashoffset: 0;
+    opacity: 1;
+    transform: translateZ(15px) scale(1.01);
+  }
+
+  100% {
+    stroke-dasharray: 200 200;
+    stroke-dashoffset: 0;
+    opacity: 1;
+    transform: translateZ(15px) scale(1);
+  }
 }
 
 .x-mark {
   color: var(--cyan);
   text-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.7), 0 0 30px rgba(var(--cyan-rgb), 0.3);
+  animation: build-x 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, pulse-glow 2s infinite 0.6s;
 }
 
 .o-mark {
   color: var(--pink);
   text-shadow: 0 0 15px rgba(var(--pink-rgb), 0.7), 0 0 30px rgba(var(--pink-rgb), 0.3);
+  animation: build-o 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 body:has(#theme-aurora:checked) .x-mark,
 body:has(#theme-aurora:checked) .o-mark {
-  text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 
 /* ====================================================
    Alternating Turn Toggles (State Logic)
    ==================================================== */
-.turn-indicator.turn-x { display: flex; }
-.cell label.label-x { display: flex; }
-.cell label.label-o { display: none; }
+.turn-indicator.turn-x {
+  display: flex;
+}
+
+.cell label.label-x {
+  display: flex;
+}
+
+.cell label.label-o {
+  display: none;
+}
 
 /* 1 checked -> O's turn */
-input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-x { display: none; }
-input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-o { display: flex; }
-input[name^='cell-']:checked ~ .board-ui .label-x { display: none; }
-input[name^='cell-']:checked ~ .board-ui .label-o { display: flex; }
+input[name^='cell-']:checked~.board-ui .turn-indicator.turn-x {
+  display: none;
+}
+
+input[name^='cell-']:checked~.board-ui .turn-indicator.turn-o {
+  display: flex;
+}
+
+input[name^='cell-']:checked~.board-ui .label-x {
+  display: none;
+}
+
+input[name^='cell-']:checked~.board-ui .label-o {
+  display: flex;
+}
 
 /* 2 checked -> X's turn */
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-x { display: flex; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-o { display: none; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-x { display: flex; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-o { display: none; }
+input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .turn-indicator.turn-x {
+  display: flex;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .turn-indicator.turn-o {
+  display: none;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .label-x {
+  display: flex;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .label-o {
+  display: none;
+}
 
 /* 3 checked -> O's turn */
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-x { display: none; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-o { display: flex; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-x { display: none; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-o { display: flex; }
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .turn-indicator.turn-x {
+  display: none;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .turn-indicator.turn-o {
+  display: flex;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .label-x {
+  display: none;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .label-o {
+  display: flex;
+}
 
 /* 4 checked -> X's turn */
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-x { display: flex; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-o { display: none; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-x { display: flex; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-o { display: none; }
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .turn-indicator.turn-x {
+  display: flex;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .turn-indicator.turn-o {
+  display: none;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .label-x {
+  display: flex;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .label-o {
+  display: none;
+}
 
 /* 5 checked -> O's turn */
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-x { display: none; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-o { display: flex; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-x { display: none; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-o { display: flex; }
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .turn-indicator.turn-x {
+  display: none;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .turn-indicator.turn-o {
+  display: flex;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .label-x {
+  display: none;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .label-o {
+  display: flex;
+}
 
 /* 6 checked -> X's turn */
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-x { display: flex; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-o { display: none; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-x { display: flex; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-o { display: none; }
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .turn-indicator.turn-x {
+  display: flex;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .turn-indicator.turn-o {
+  display: none;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .label-x {
+  display: flex;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .label-o {
+  display: none;
+}
 
 /* 7 checked -> O's turn */
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-x { display: none; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-o { display: flex; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-x { display: none; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-o { display: flex; }
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .turn-indicator.turn-x {
+  display: none;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .turn-indicator.turn-o {
+  display: flex;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .label-x {
+  display: none;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .label-o {
+  display: flex;
+}
 
 /* 8 checked -> X's turn */
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-x { display: flex; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-o { display: none; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-x { display: flex; }
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-o { display: none; }
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .turn-indicator.turn-x {
+  display: flex;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .turn-indicator.turn-o {
+  display: none;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .label-x {
+  display: flex;
+}
+
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .label-o {
+  display: none;
+}
 
 
 /* ====================================================
    Individual Checked Cell Overrides
    ==================================================== */
-#cell-1-x:checked ~ .board-ui .cell-1 label, #cell-1-o:checked ~ .board-ui .cell-1 label,
-#cell-2-x:checked ~ .board-ui .cell-2 label, #cell-2-o:checked ~ .board-ui .cell-2 label,
-#cell-3-x:checked ~ .board-ui .cell-3 label, #cell-3-o:checked ~ .board-ui .cell-3 label,
-#cell-4-x:checked ~ .board-ui .cell-4 label, #cell-4-o:checked ~ .board-ui .cell-4 label,
-#cell-5-x:checked ~ .board-ui .cell-5 label, #cell-5-o:checked ~ .board-ui .cell-5 label,
-#cell-6-x:checked ~ .board-ui .cell-6 label, #cell-6-o:checked ~ .board-ui .cell-6 label,
-#cell-7-x:checked ~ .board-ui .cell-7 label, #cell-7-o:checked ~ .board-ui .cell-7 label,
-#cell-8-x:checked ~ .board-ui .cell-8 label, #cell-8-o:checked ~ .board-ui .cell-8 label,
-#cell-9-x:checked ~ .board-ui .cell-9 label, #cell-9-o:checked ~ .board-ui .cell-9 label {
+#cell-1-x:checked~.board-ui .cell-1 label,
+#cell-1-o:checked~.board-ui .cell-1 label,
+#cell-2-x:checked~.board-ui .cell-2 label,
+#cell-2-o:checked~.board-ui .cell-2 label,
+#cell-3-x:checked~.board-ui .cell-3 label,
+#cell-3-o:checked~.board-ui .cell-3 label,
+#cell-4-x:checked~.board-ui .cell-4 label,
+#cell-4-o:checked~.board-ui .cell-4 label,
+#cell-5-x:checked~.board-ui .cell-5 label,
+#cell-5-o:checked~.board-ui .cell-5 label,
+#cell-6-x:checked~.board-ui .cell-6 label,
+#cell-6-o:checked~.board-ui .cell-6 label,
+#cell-7-x:checked~.board-ui .cell-7 label,
+#cell-7-o:checked~.board-ui .cell-7 label,
+#cell-8-x:checked~.board-ui .cell-8 label,
+#cell-8-o:checked~.board-ui .cell-8 label,
+#cell-9-x:checked~.board-ui .cell-9 label,
+#cell-9-o:checked~.board-ui .cell-9 label {
   display: none !important;
   pointer-events: none;
 }
 
-#cell-1-x:checked ~ .board-ui .cell-1 .x-mark, #cell-2-x:checked ~ .board-ui .cell-2 .x-mark,
-#cell-3-x:checked ~ .board-ui .cell-3 .x-mark, #cell-4-x:checked ~ .board-ui .cell-4 .x-mark,
-#cell-5-x:checked ~ .board-ui .cell-5 .x-mark, #cell-6-x:checked ~ .board-ui .cell-6 .x-mark,
-#cell-7-x:checked ~ .board-ui .cell-7 .x-mark, #cell-8-x:checked ~ .board-ui .cell-8 .x-mark,
-#cell-9-x:checked ~ .board-ui .cell-9 .x-mark {
+#cell-1-x:checked~.board-ui .cell-1 .x-mark,
+#cell-2-x:checked~.board-ui .cell-2 .x-mark,
+#cell-3-x:checked~.board-ui .cell-3 .x-mark,
+#cell-4-x:checked~.board-ui .cell-4 .x-mark,
+#cell-5-x:checked~.board-ui .cell-5 .x-mark,
+#cell-6-x:checked~.board-ui .cell-6 .x-mark,
+#cell-7-x:checked~.board-ui .cell-7 .x-mark,
+#cell-8-x:checked~.board-ui .cell-8 .x-mark,
+#cell-9-x:checked~.board-ui .cell-9 .x-mark {
   display: flex;
 }
 
-#cell-1-o:checked ~ .board-ui .cell-1 .o-mark, #cell-2-o:checked ~ .board-ui .cell-2 .o-mark,
-#cell-3-o:checked ~ .board-ui .cell-3 .o-mark, #cell-4-o:checked ~ .board-ui .cell-4 .o-mark,
-#cell-5-o:checked ~ .board-ui .cell-5 .o-mark, #cell-6-o:checked ~ .board-ui .cell-6 .o-mark,
-#cell-7-o:checked ~ .board-ui .cell-7 .o-mark, #cell-8-o:checked ~ .board-ui .cell-8 .o-mark,
-#cell-9-o:checked ~ .board-ui .cell-9 .o-mark {
+#cell-1-o:checked~.board-ui .cell-1 .o-mark,
+#cell-2-o:checked~.board-ui .cell-2 .o-mark,
+#cell-3-o:checked~.board-ui .cell-3 .o-mark,
+#cell-4-o:checked~.board-ui .cell-4 .o-mark,
+#cell-5-o:checked~.board-ui .cell-5 .o-mark,
+#cell-6-o:checked~.board-ui .cell-6 .o-mark,
+#cell-7-o:checked~.board-ui .cell-7 .o-mark,
+#cell-8-o:checked~.board-ui .cell-8 .o-mark,
+#cell-9-o:checked~.board-ui .cell-9 .o-mark {
   display: flex;
 }
 
 /* Glowing Border highlights for active inputs */
-#cell-1-x:checked ~ .board-ui .cell-1 { background: rgba(var(--cyan-rgb), 0.05); border-color: rgba(var(--cyan-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1); }
-#cell-1-o:checked ~ .board-ui .cell-1 { background: rgba(var(--pink-rgb), 0.05); border-color: rgba(var(--pink-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1); }
-#cell-2-x:checked ~ .board-ui .cell-2 { background: rgba(var(--cyan-rgb), 0.05); border-color: rgba(var(--cyan-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1); }
-#cell-2-o:checked ~ .board-ui .cell-2 { background: rgba(var(--pink-rgb), 0.05); border-color: rgba(var(--pink-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1); }
-#cell-3-x:checked ~ .board-ui .cell-3 { background: rgba(var(--cyan-rgb), 0.05); border-color: rgba(var(--cyan-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1); }
-#cell-3-o:checked ~ .board-ui .cell-3 { background: rgba(var(--pink-rgb), 0.05); border-color: rgba(var(--pink-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1); }
-#cell-4-x:checked ~ .board-ui .cell-4 { background: rgba(var(--cyan-rgb), 0.05); border-color: rgba(var(--cyan-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1); }
-#cell-4-o:checked ~ .board-ui .cell-4 { background: rgba(var(--pink-rgb), 0.05); border-color: rgba(var(--pink-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1); }
-#cell-5-x:checked ~ .board-ui .cell-5 { background: rgba(var(--cyan-rgb), 0.05); border-color: rgba(var(--cyan-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1); }
-#cell-5-o:checked ~ .board-ui .cell-5 { background: rgba(var(--pink-rgb), 0.05); border-color: rgba(var(--pink-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1); }
-#cell-6-x:checked ~ .board-ui .cell-6 { background: rgba(var(--cyan-rgb), 0.05); border-color: rgba(var(--cyan-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1); }
-#cell-6-o:checked ~ .board-ui .cell-6 { background: rgba(var(--pink-rgb), 0.05); border-color: rgba(var(--pink-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1); }
-#cell-7-x:checked ~ .board-ui .cell-7 { background: rgba(var(--cyan-rgb), 0.05); border-color: rgba(var(--cyan-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1); }
-#cell-7-o:checked ~ .board-ui .cell-7 { background: rgba(var(--pink-rgb), 0.05); border-color: rgba(var(--pink-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1); }
-#cell-8-x:checked ~ .board-ui .cell-8 { background: rgba(var(--cyan-rgb), 0.05); border-color: rgba(var(--cyan-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1); }
-#cell-8-o:checked ~ .board-ui .cell-8 { background: rgba(var(--pink-rgb), 0.05); border-color: rgba(var(--pink-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1); }
-#cell-9-x:checked ~ .board-ui .cell-9 { background: rgba(var(--cyan-rgb), 0.05); border-color: rgba(var(--cyan-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1); }
-#cell-9-o:checked ~ .board-ui .cell-9 { background: rgba(var(--pink-rgb), 0.05); border-color: rgba(var(--pink-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1); }
+#cell-1-x:checked~.board-ui .cell-1 {
+  background: rgba(var(--cyan-rgb), 0.05);
+  border-color: rgba(var(--cyan-rgb), 0.25);
+  box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1);
+}
+
+#cell-1-o:checked~.board-ui .cell-1 {
+  background: rgba(var(--pink-rgb), 0.05);
+  border-color: rgba(var(--pink-rgb), 0.25);
+  box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1);
+}
+
+#cell-2-x:checked~.board-ui .cell-2 {
+  background: rgba(var(--cyan-rgb), 0.05);
+  border-color: rgba(var(--cyan-rgb), 0.25);
+  box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1);
+}
+
+#cell-2-o:checked~.board-ui .cell-2 {
+  background: rgba(var(--pink-rgb), 0.05);
+  border-color: rgba(var(--pink-rgb), 0.25);
+  box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1);
+}
+
+#cell-3-x:checked~.board-ui .cell-3 {
+  background: rgba(var(--cyan-rgb), 0.05);
+  border-color: rgba(var(--cyan-rgb), 0.25);
+  box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1);
+}
+
+#cell-3-o:checked~.board-ui .cell-3 {
+  background: rgba(var(--pink-rgb), 0.05);
+  border-color: rgba(var(--pink-rgb), 0.25);
+  box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1);
+}
+
+#cell-4-x:checked~.board-ui .cell-4 {
+  background: rgba(var(--cyan-rgb), 0.05);
+  border-color: rgba(var(--cyan-rgb), 0.25);
+  box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1);
+}
+
+#cell-4-o:checked~.board-ui .cell-4 {
+  background: rgba(var(--pink-rgb), 0.05);
+  border-color: rgba(var(--pink-rgb), 0.25);
+  box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1);
+}
+
+#cell-5-x:checked~.board-ui .cell-5 {
+  background: rgba(var(--cyan-rgb), 0.05);
+  border-color: rgba(var(--cyan-rgb), 0.25);
+  box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1);
+}
+
+#cell-5-o:checked~.board-ui .cell-5 {
+  background: rgba(var(--pink-rgb), 0.05);
+  border-color: rgba(var(--pink-rgb), 0.25);
+  box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1);
+}
+
+#cell-6-x:checked~.board-ui .cell-6 {
+  background: rgba(var(--cyan-rgb), 0.05);
+  border-color: rgba(var(--cyan-rgb), 0.25);
+  box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1);
+}
+
+#cell-6-o:checked~.board-ui .cell-6 {
+  background: rgba(var(--pink-rgb), 0.05);
+  border-color: rgba(var(--pink-rgb), 0.25);
+  box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1);
+}
+
+#cell-7-x:checked~.board-ui .cell-7 {
+  background: rgba(var(--cyan-rgb), 0.05);
+  border-color: rgba(var(--cyan-rgb), 0.25);
+  box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1);
+}
+
+#cell-7-o:checked~.board-ui .cell-7 {
+  background: rgba(var(--pink-rgb), 0.05);
+  border-color: rgba(var(--pink-rgb), 0.25);
+  box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1);
+}
+
+#cell-8-x:checked~.board-ui .cell-8 {
+  background: rgba(var(--cyan-rgb), 0.05);
+  border-color: rgba(var(--cyan-rgb), 0.25);
+  box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1);
+}
+
+#cell-8-o:checked~.board-ui .cell-8 {
+  background: rgba(var(--pink-rgb), 0.05);
+  border-color: rgba(var(--pink-rgb), 0.25);
+  box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1);
+}
+
+#cell-9-x:checked~.board-ui .cell-9 {
+  background: rgba(var(--cyan-rgb), 0.05);
+  border-color: rgba(var(--cyan-rgb), 0.25);
+  box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1);
+}
+
+#cell-9-o:checked~.board-ui .cell-9 {
+  background: rgba(var(--pink-rgb), 0.05);
+  border-color: rgba(var(--pink-rgb), 0.25);
+  box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1);
+}
 
 
 /* ====================================================
@@ -781,7 +1364,7 @@ body:has(#theme-aurora:checked) .label-o::after {
 .win-line {
   position: absolute;
   background: linear-gradient(90deg, var(--cyan), var(--pink));
-  box-shadow: 
+  box-shadow:
     0 0 12px rgba(var(--cyan-rgb), 0.8),
     0 0 20px rgba(var(--pink-rgb), 0.8);
   border-radius: 4px;
@@ -792,18 +1375,64 @@ body:has(#theme-aurora:checked) .label-o::after {
 }
 
 body:has(#theme-aurora:checked) .win-line {
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 /* Horizontal Rows */
-.win-line.row-1 { top: 16.66%; left: 5%; width: 90%; height: 6px; transform: scaleX(0); transform-origin: left center; }
-.win-line.row-2 { top: 50%; left: 5%; width: 90%; height: 6px; transform: scaleX(0); transform-origin: left center; }
-.win-line.row-3 { top: 83.33%; left: 5%; width: 90%; height: 6px; transform: scaleX(0); transform-origin: left center; }
+.win-line.row-1 {
+  top: 16.66%;
+  left: 5%;
+  width: 90%;
+  height: 6px;
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.win-line.row-2 {
+  top: 50%;
+  left: 5%;
+  width: 90%;
+  height: 6px;
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.win-line.row-3 {
+  top: 83.33%;
+  left: 5%;
+  width: 90%;
+  height: 6px;
+  transform: scaleX(0);
+  transform-origin: left center;
+}
 
 /* Vertical Columns */
-.win-line.col-1 { left: 16.66%; top: 5%; height: 90%; width: 6px; transform: scaleY(0); transform-origin: top center; }
-.win-line.col-2 { left: 50%; top: 5%; height: 90%; width: 6px; transform: scaleY(0); transform-origin: top center; }
-.win-line.col-3 { left: 83.33%; top: 5%; height: 90%; width: 6px; transform: scaleY(0); transform-origin: top center; }
+.win-line.col-1 {
+  left: 16.66%;
+  top: 5%;
+  height: 90%;
+  width: 6px;
+  transform: scaleY(0);
+  transform-origin: top center;
+}
+
+.win-line.col-2 {
+  left: 50%;
+  top: 5%;
+  height: 90%;
+  width: 6px;
+  transform: scaleY(0);
+  transform-origin: top center;
+}
+
+.win-line.col-3 {
+  left: 83.33%;
+  top: 5%;
+  height: 90%;
+  width: 6px;
+  transform: scaleY(0);
+  transform-origin: top center;
+}
 
 /* Diagonals */
 .win-line.diag-1 {
@@ -827,36 +1456,36 @@ body:has(#theme-aurora:checked) .win-line {
 /* Win Line Activation selectors */
 
 /* Rows */
-#cell-1-x:checked ~ #cell-2-x:checked ~ #cell-3-x:checked ~ .board-ui .win-line.row-1,
-#cell-4-x:checked ~ #cell-5-x:checked ~ #cell-6-x:checked ~ .board-ui .win-line.row-2,
-#cell-7-x:checked ~ #cell-8-x:checked ~ #cell-9-x:checked ~ .board-ui .win-line.row-3,
-#cell-1-o:checked ~ #cell-2-o:checked ~ #cell-3-o:checked ~ .board-ui .win-line.row-1,
-#cell-4-o:checked ~ #cell-5-o:checked ~ #cell-6-o:checked ~ .board-ui .win-line.row-2,
-#cell-7-o:checked ~ #cell-8-o:checked ~ #cell-9-o:checked ~ .board-ui .win-line.row-3 {
+#cell-1-x:checked~#cell-2-x:checked~#cell-3-x:checked~.board-ui .win-line.row-1,
+#cell-4-x:checked~#cell-5-x:checked~#cell-6-x:checked~.board-ui .win-line.row-2,
+#cell-7-x:checked~#cell-8-x:checked~#cell-9-x:checked~.board-ui .win-line.row-3,
+#cell-1-o:checked~#cell-2-o:checked~#cell-3-o:checked~.board-ui .win-line.row-1,
+#cell-4-o:checked~#cell-5-o:checked~#cell-6-o:checked~.board-ui .win-line.row-2,
+#cell-7-o:checked~#cell-8-o:checked~#cell-9-o:checked~.board-ui .win-line.row-3 {
   opacity: 1;
   transform: scaleX(1);
 }
 
 /* Columns */
-#cell-1-x:checked ~ #cell-4-x:checked ~ #cell-7-x:checked ~ .board-ui .win-line.col-1,
-#cell-2-x:checked ~ #cell-5-x:checked ~ #cell-8-x:checked ~ .board-ui .win-line.col-2,
-#cell-3-x:checked ~ #cell-6-x:checked ~ #cell-9-x:checked ~ .board-ui .win-line.col-3,
-#cell-1-o:checked ~ #cell-4-o:checked ~ #cell-7-o:checked ~ .board-ui .win-line.col-1,
-#cell-2-o:checked ~ #cell-5-o:checked ~ #cell-8-o:checked ~ .board-ui .win-line.col-2,
-#cell-3-o:checked ~ #cell-6-o:checked ~ #cell-9-o:checked ~ .board-ui .win-line.col-3 {
+#cell-1-x:checked~#cell-4-x:checked~#cell-7-x:checked~.board-ui .win-line.col-1,
+#cell-2-x:checked~#cell-5-x:checked~#cell-8-x:checked~.board-ui .win-line.col-2,
+#cell-3-x:checked~#cell-6-x:checked~#cell-9-x:checked~.board-ui .win-line.col-3,
+#cell-1-o:checked~#cell-4-o:checked~#cell-7-o:checked~.board-ui .win-line.col-1,
+#cell-2-o:checked~#cell-5-o:checked~#cell-8-o:checked~.board-ui .win-line.col-2,
+#cell-3-o:checked~#cell-6-o:checked~#cell-9-o:checked~.board-ui .win-line.col-3 {
   opacity: 1;
   transform: scaleY(1);
 }
 
 /* Diagonals */
-#cell-1-x:checked ~ #cell-5-x:checked ~ #cell-9-x:checked ~ .board-ui .win-line.diag-1,
-#cell-1-o:checked ~ #cell-5-o:checked ~ #cell-9-o:checked ~ .board-ui .win-line.diag-1 {
+#cell-1-x:checked~#cell-5-x:checked~#cell-9-x:checked~.board-ui .win-line.diag-1,
+#cell-1-o:checked~#cell-5-o:checked~#cell-9-o:checked~.board-ui .win-line.diag-1 {
   opacity: 1;
   transform: translate(-50%, -50%) rotate(45deg) scaleX(1);
 }
 
-#cell-3-x:checked ~ #cell-5-x:checked ~ #cell-7-x:checked ~ .board-ui .win-line.diag-2,
-#cell-3-o:checked ~ #cell-5-o:checked ~ #cell-7-o:checked ~ .board-ui .win-line.diag-2 {
+#cell-3-x:checked~#cell-5-x:checked~#cell-7-x:checked~.board-ui .win-line.diag-2,
+#cell-3-o:checked~#cell-5-o:checked~#cell-7-o:checked~.board-ui .win-line.diag-2 {
   opacity: 1;
   transform: translate(-50%, -50%) rotate(-45deg) scaleX(1);
 }
@@ -918,109 +1547,118 @@ body:has(#theme-retro:checked) .winner-text {
 }
 
 @keyframes fade-in {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.win-x-title, .win-x-text,
-.win-o-title, .win-o-text {
+.win-x-title,
+.win-x-text,
+.win-o-title,
+.win-o-text {
   display: none;
 }
 
 /* X Wins overlay selectors */
-#cell-1-x:checked ~ #cell-2-x:checked ~ #cell-3-x:checked ~ .board-ui .win-overlay,
-#cell-4-x:checked ~ #cell-5-x:checked ~ #cell-6-x:checked ~ .board-ui .win-overlay,
-#cell-7-x:checked ~ #cell-8-x:checked ~ #cell-9-x:checked ~ .board-ui .win-overlay,
-#cell-1-x:checked ~ #cell-4-x:checked ~ #cell-7-x:checked ~ .board-ui .win-overlay,
-#cell-2-x:checked ~ #cell-5-x:checked ~ #cell-8-x:checked ~ .board-ui .win-overlay,
-#cell-3-x:checked ~ #cell-6-x:checked ~ #cell-9-x:checked ~ .board-ui .win-overlay,
-#cell-1-x:checked ~ #cell-5-x:checked ~ #cell-9-x:checked ~ .board-ui .win-overlay,
-#cell-3-x:checked ~ #cell-5-x:checked ~ #cell-7-x:checked ~ .board-ui .win-overlay {
+#cell-1-x:checked~#cell-2-x:checked~#cell-3-x:checked~.board-ui .win-overlay,
+#cell-4-x:checked~#cell-5-x:checked~#cell-6-x:checked~.board-ui .win-overlay,
+#cell-7-x:checked~#cell-8-x:checked~#cell-9-x:checked~.board-ui .win-overlay,
+#cell-1-x:checked~#cell-4-x:checked~#cell-7-x:checked~.board-ui .win-overlay,
+#cell-2-x:checked~#cell-5-x:checked~#cell-8-x:checked~.board-ui .win-overlay,
+#cell-3-x:checked~#cell-6-x:checked~#cell-9-x:checked~.board-ui .win-overlay,
+#cell-1-x:checked~#cell-5-x:checked~#cell-9-x:checked~.board-ui .win-overlay,
+#cell-3-x:checked~#cell-5-x:checked~#cell-7-x:checked~.board-ui .win-overlay {
   display: flex;
 }
 
-#cell-1-x:checked ~ #cell-2-x:checked ~ #cell-3-x:checked ~ .board-ui .win-overlay .win-x-title,
-#cell-4-x:checked ~ #cell-5-x:checked ~ #cell-6-x:checked ~ .board-ui .win-overlay .win-x-title,
-#cell-7-x:checked ~ #cell-8-x:checked ~ #cell-9-x:checked ~ .board-ui .win-overlay .win-x-title,
-#cell-1-x:checked ~ #cell-4-x:checked ~ #cell-7-x:checked ~ .board-ui .win-overlay .win-x-title,
-#cell-2-x:checked ~ #cell-5-x:checked ~ #cell-8-x:checked ~ .board-ui .win-overlay .win-x-title,
-#cell-3-x:checked ~ #cell-6-x:checked ~ #cell-9-x:checked ~ .board-ui .win-overlay .win-x-title,
-#cell-1-x:checked ~ #cell-5-x:checked ~ #cell-9-x:checked ~ .board-ui .win-overlay .win-x-title,
-#cell-3-x:checked ~ #cell-5-x:checked ~ #cell-7-x:checked ~ .board-ui .win-overlay .win-x-title {
+#cell-1-x:checked~#cell-2-x:checked~#cell-3-x:checked~.board-ui .win-overlay .win-x-title,
+#cell-4-x:checked~#cell-5-x:checked~#cell-6-x:checked~.board-ui .win-overlay .win-x-title,
+#cell-7-x:checked~#cell-8-x:checked~#cell-9-x:checked~.board-ui .win-overlay .win-x-title,
+#cell-1-x:checked~#cell-4-x:checked~#cell-7-x:checked~.board-ui .win-overlay .win-x-title,
+#cell-2-x:checked~#cell-5-x:checked~#cell-8-x:checked~.board-ui .win-overlay .win-x-title,
+#cell-3-x:checked~#cell-6-x:checked~#cell-9-x:checked~.board-ui .win-overlay .win-x-title,
+#cell-1-x:checked~#cell-5-x:checked~#cell-9-x:checked~.board-ui .win-overlay .win-x-title,
+#cell-3-x:checked~#cell-5-x:checked~#cell-7-x:checked~.board-ui .win-overlay .win-x-title {
   display: block;
   color: var(--cyan);
   text-shadow: 0 0 20px rgba(var(--cyan-rgb), 0.6);
 }
 
-#cell-1-x:checked ~ #cell-2-x:checked ~ #cell-3-x:checked ~ .board-ui .win-overlay .win-x-text,
-#cell-4-x:checked ~ #cell-5-x:checked ~ #cell-6-x:checked ~ .board-ui .win-overlay .win-x-text,
-#cell-7-x:checked ~ #cell-8-x:checked ~ #cell-9-x:checked ~ .board-ui .win-overlay .win-x-text,
-#cell-1-x:checked ~ #cell-4-x:checked ~ #cell-7-x:checked ~ .board-ui .win-overlay .win-x-text,
-#cell-2-x:checked ~ #cell-5-x:checked ~ #cell-8-x:checked ~ .board-ui .win-overlay .win-x-text,
-#cell-3-x:checked ~ #cell-6-x:checked ~ #cell-9-x:checked ~ .board-ui .win-overlay .win-x-text,
-#cell-1-x:checked ~ #cell-5-x:checked ~ #cell-9-x:checked ~ .board-ui .win-overlay .win-x-text,
-#cell-3-x:checked ~ #cell-5-x:checked ~ #cell-7-x:checked ~ .board-ui .win-overlay .win-x-text {
+#cell-1-x:checked~#cell-2-x:checked~#cell-3-x:checked~.board-ui .win-overlay .win-x-text,
+#cell-4-x:checked~#cell-5-x:checked~#cell-6-x:checked~.board-ui .win-overlay .win-x-text,
+#cell-7-x:checked~#cell-8-x:checked~#cell-9-x:checked~.board-ui .win-overlay .win-x-text,
+#cell-1-x:checked~#cell-4-x:checked~#cell-7-x:checked~.board-ui .win-overlay .win-x-text,
+#cell-2-x:checked~#cell-5-x:checked~#cell-8-x:checked~.board-ui .win-overlay .win-x-text,
+#cell-3-x:checked~#cell-6-x:checked~#cell-9-x:checked~.board-ui .win-overlay .win-x-text,
+#cell-1-x:checked~#cell-5-x:checked~#cell-9-x:checked~.board-ui .win-overlay .win-x-text,
+#cell-3-x:checked~#cell-5-x:checked~#cell-7-x:checked~.board-ui .win-overlay .win-x-text {
   display: block;
 }
 
 /* O Wins overlay selectors */
-#cell-1-o:checked ~ #cell-2-o:checked ~ #cell-3-o:checked ~ .board-ui .win-overlay,
-#cell-4-o:checked ~ #cell-5-o:checked ~ #cell-6-o:checked ~ .board-ui .win-overlay,
-#cell-7-o:checked ~ #cell-8-o:checked ~ #cell-9-o:checked ~ .board-ui .win-overlay,
-#cell-1-o:checked ~ #cell-4-o:checked ~ #cell-7-o:checked ~ .board-ui .win-overlay,
-#cell-2-o:checked ~ #cell-5-o:checked ~ #cell-8-o:checked ~ .board-ui .win-overlay,
-#cell-3-o:checked ~ #cell-6-o:checked ~ #cell-9-o:checked ~ .board-ui .win-overlay,
-#cell-1-o:checked ~ #cell-5-o:checked ~ #cell-9-o:checked ~ .board-ui .win-overlay,
-#cell-3-o:checked ~ #cell-5-o:checked ~ #cell-7-o:checked ~ .board-ui .win-overlay {
+#cell-1-o:checked~#cell-2-o:checked~#cell-3-o:checked~.board-ui .win-overlay,
+#cell-4-o:checked~#cell-5-o:checked~#cell-6-o:checked~.board-ui .win-overlay,
+#cell-7-o:checked~#cell-8-o:checked~#cell-9-o:checked~.board-ui .win-overlay,
+#cell-1-o:checked~#cell-4-o:checked~#cell-7-o:checked~.board-ui .win-overlay,
+#cell-2-o:checked~#cell-5-o:checked~#cell-8-o:checked~.board-ui .win-overlay,
+#cell-3-o:checked~#cell-6-o:checked~#cell-9-o:checked~.board-ui .win-overlay,
+#cell-1-o:checked~#cell-5-o:checked~#cell-9-o:checked~.board-ui .win-overlay,
+#cell-3-o:checked~#cell-5-o:checked~#cell-7-o:checked~.board-ui .win-overlay {
   display: flex;
 }
 
-#cell-1-o:checked ~ #cell-2-o:checked ~ #cell-3-o:checked ~ .board-ui .win-overlay .win-o-title,
-#cell-4-o:checked ~ #cell-5-o:checked ~ #cell-6-o:checked ~ .board-ui .win-overlay .win-o-title,
-#cell-7-o:checked ~ #cell-8-o:checked ~ #cell-9-o:checked ~ .board-ui .win-overlay .win-o-title,
-#cell-1-o:checked ~ #cell-4-o:checked ~ #cell-7-o:checked ~ .board-ui .win-overlay .win-o-title,
-#cell-2-o:checked ~ #cell-5-o:checked ~ #cell-8-o:checked ~ .board-ui .win-overlay .win-o-title,
-#cell-3-o:checked ~ #cell-6-o:checked ~ #cell-9-o:checked ~ .board-ui .win-overlay .win-o-title,
-#cell-1-o:checked ~ #cell-5-o:checked ~ #cell-9-o:checked ~ .board-ui .win-overlay .win-o-title,
-#cell-3-o:checked ~ #cell-5-o:checked ~ #cell-7-o:checked ~ .board-ui .win-overlay .win-o-title {
+#cell-1-o:checked~#cell-2-o:checked~#cell-3-o:checked~.board-ui .win-overlay .win-o-title,
+#cell-4-o:checked~#cell-5-o:checked~#cell-6-o:checked~.board-ui .win-overlay .win-o-title,
+#cell-7-o:checked~#cell-8-o:checked~#cell-9-o:checked~.board-ui .win-overlay .win-o-title,
+#cell-1-o:checked~#cell-4-o:checked~#cell-7-o:checked~.board-ui .win-overlay .win-o-title,
+#cell-2-o:checked~#cell-5-o:checked~#cell-8-o:checked~.board-ui .win-overlay .win-o-title,
+#cell-3-o:checked~#cell-6-o:checked~#cell-9-o:checked~.board-ui .win-overlay .win-o-title,
+#cell-1-o:checked~#cell-5-o:checked~#cell-9-o:checked~.board-ui .win-overlay .win-o-title,
+#cell-3-o:checked~#cell-5-o:checked~#cell-7-o:checked~.board-ui .win-overlay .win-o-title {
   display: block;
   color: var(--pink);
   text-shadow: 0 0 20px rgba(var(--pink-rgb), 0.6);
 }
 
-#cell-1-o:checked ~ #cell-2-o:checked ~ #cell-3-o:checked ~ .board-ui .win-overlay .win-o-text,
-#cell-4-o:checked ~ #cell-5-o:checked ~ #cell-6-o:checked ~ .board-ui .win-overlay .win-o-text,
-#cell-7-o:checked ~ #cell-8-o:checked ~ #cell-9-o:checked ~ .board-ui .win-overlay .win-o-text,
-#cell-1-o:checked ~ #cell-4-o:checked ~ #cell-7-o:checked ~ .board-ui .win-overlay .win-o-text,
-#cell-2-o:checked ~ #cell-5-o:checked ~ #cell-8-o:checked ~ .board-ui .win-overlay .win-o-text,
-#cell-3-o:checked ~ #cell-6-o:checked ~ #cell-9-o:checked ~ .board-ui .win-overlay .win-o-text,
-#cell-1-o:checked ~ #cell-5-o:checked ~ #cell-9-o:checked ~ .board-ui .win-overlay .win-o-text,
-#cell-3-o:checked ~ #cell-5-o:checked ~ #cell-7-o:checked ~ .board-ui .win-overlay .win-o-text {
+#cell-1-o:checked~#cell-2-o:checked~#cell-3-o:checked~.board-ui .win-overlay .win-o-text,
+#cell-4-o:checked~#cell-5-o:checked~#cell-6-o:checked~.board-ui .win-overlay .win-o-text,
+#cell-7-o:checked~#cell-8-o:checked~#cell-9-o:checked~.board-ui .win-overlay .win-o-text,
+#cell-1-o:checked~#cell-4-o:checked~#cell-7-o:checked~.board-ui .win-overlay .win-o-text,
+#cell-2-o:checked~#cell-5-o:checked~#cell-8-o:checked~.board-ui .win-overlay .win-o-text,
+#cell-3-o:checked~#cell-6-o:checked~#cell-9-o:checked~.board-ui .win-overlay .win-o-text,
+#cell-1-o:checked~#cell-5-o:checked~#cell-9-o:checked~.board-ui .win-overlay .win-o-text,
+#cell-3-o:checked~#cell-5-o:checked~#cell-7-o:checked~.board-ui .win-overlay .win-o-text {
   display: block;
 }
 
 /* Draw overlay triggers when 9 checks exist */
-input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .draw-overlay {
+input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~input[name^='cell-']:checked~.board-ui .draw-overlay {
   display: flex;
 }
 
 /* Hide Draw Overlay if 9th move was a win */
-#cell-1-x:checked ~ #cell-2-x:checked ~ #cell-3-x:checked ~ .board-ui .draw-overlay,
-#cell-4-x:checked ~ #cell-5-x:checked ~ #cell-6-x:checked ~ .board-ui .draw-overlay,
-#cell-7-x:checked ~ #cell-8-x:checked ~ #cell-9-x:checked ~ .board-ui .draw-overlay,
-#cell-1-x:checked ~ #cell-4-x:checked ~ #cell-7-x:checked ~ .board-ui .draw-overlay,
-#cell-2-x:checked ~ #cell-5-x:checked ~ #cell-8-x:checked ~ .board-ui .draw-overlay,
-#cell-3-x:checked ~ #cell-6-x:checked ~ #cell-9-x:checked ~ .board-ui .draw-overlay,
-#cell-1-x:checked ~ #cell-5-x:checked ~ #cell-9-x:checked ~ .board-ui .draw-overlay,
-#cell-3-x:checked ~ #cell-5-x:checked ~ #cell-7-x:checked ~ .board-ui .draw-overlay,
-#cell-1-o:checked ~ #cell-2-o:checked ~ #cell-3-o:checked ~ .board-ui .draw-overlay,
-#cell-4-o:checked ~ #cell-5-o:checked ~ #cell-6-o:checked ~ .board-ui .draw-overlay,
-#cell-7-o:checked ~ #cell-8-o:checked ~ #cell-9-o:checked ~ .board-ui .draw-overlay,
-#cell-1-o:checked ~ #cell-4-o:checked ~ #cell-7-o:checked ~ .board-ui .draw-overlay,
-#cell-2-o:checked ~ #cell-5-o:checked ~ #cell-8-o:checked ~ .board-ui .draw-overlay,
-#cell-3-o:checked ~ #cell-6-o:checked ~ #cell-9-o:checked ~ .board-ui .draw-overlay,
-#cell-1-o:checked ~ #cell-5-o:checked ~ #cell-9-o:checked ~ .board-ui .draw-overlay,
-#cell-3-o:checked ~ #cell-5-o:checked ~ #cell-7-o:checked ~ .board-ui .draw-overlay {
+#cell-1-x:checked~#cell-2-x:checked~#cell-3-x:checked~.board-ui .draw-overlay,
+#cell-4-x:checked~#cell-5-x:checked~#cell-6-x:checked~.board-ui .draw-overlay,
+#cell-7-x:checked~#cell-8-x:checked~#cell-9-x:checked~.board-ui .draw-overlay,
+#cell-1-x:checked~#cell-4-x:checked~#cell-7-x:checked~.board-ui .draw-overlay,
+#cell-2-x:checked~#cell-5-x:checked~#cell-8-x:checked~.board-ui .draw-overlay,
+#cell-3-x:checked~#cell-6-x:checked~#cell-9-x:checked~.board-ui .draw-overlay,
+#cell-1-x:checked~#cell-5-x:checked~#cell-9-x:checked~.board-ui .draw-overlay,
+#cell-3-x:checked~#cell-5-x:checked~#cell-7-x:checked~.board-ui .draw-overlay,
+#cell-1-o:checked~#cell-2-o:checked~#cell-3-o:checked~.board-ui .draw-overlay,
+#cell-4-o:checked~#cell-5-o:checked~#cell-6-o:checked~.board-ui .draw-overlay,
+#cell-7-o:checked~#cell-8-o:checked~#cell-9-o:checked~.board-ui .draw-overlay,
+#cell-1-o:checked~#cell-4-o:checked~#cell-7-o:checked~.board-ui .draw-overlay,
+#cell-2-o:checked~#cell-5-o:checked~#cell-8-o:checked~.board-ui .draw-overlay,
+#cell-3-o:checked~#cell-6-o:checked~#cell-9-o:checked~.board-ui .draw-overlay,
+#cell-1-o:checked~#cell-5-o:checked~#cell-9-o:checked~.board-ui .draw-overlay,
+#cell-3-o:checked~#cell-5-o:checked~#cell-7-o:checked~.board-ui .draw-overlay {
   display: none !important;
 }
 
@@ -1083,8 +1721,60 @@ body:has(#theme-aurora:checked) .draw-overlay .neon-btn:hover {
   background: rgba(0, 0, 0, 0.06);
 }
 
+.top-left-reset-btn {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  z-index: 50;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  box-shadow: 0 0 18px rgba(var(--cyan-rgb), 0.12), inset 0 0 10px rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.top-left-reset-btn:hover {
+  transform: translateY(-2px) rotate(-8deg);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 28px rgba(var(--cyan-rgb), 0.22), inset 0 0 12px rgba(255, 255, 255, 0.08);
+}
+
+.top-left-reset-icon {
+  font-size: 1.2rem;
+  color: var(--text-color);
+  text-shadow: 0 0 12px rgba(var(--cyan-rgb), 0.3);
+  transform-origin: center;
+  transition: transform 0.45s ease;
+}
+
+.top-left-reset-btn:hover .top-left-reset-icon {
+  transform: rotate(-180deg);
+}
+
+body:has(#theme-retro:checked) .top-left-reset-btn {
+  border-color: rgba(var(--cyan-rgb), 0.25);
+  box-shadow: 0 0 22px rgba(57, 255, 20, 0.18), inset 0 0 10px rgba(57, 255, 20, 0.12);
+}
+
+body:has(#theme-aurora:checked) .top-left-reset-btn {
+  background: rgba(255, 255, 255, 0.55);
+  border-color: rgba(0, 0, 0, 0.06);
+  box-shadow: 0 0 18px rgba(108, 92, 231, 0.12), inset 0 0 10px rgba(0, 0, 0, 0.04);
+}
+
+body:has(#theme-aurora:checked) .top-left-reset-icon {
+  text-shadow: none;
+}
+
 .board-reset-btn {
   font-family: var(--font-family-body), sans-serif;
+
   font-weight: 600;
   font-size: 0.8rem;
   letter-spacing: 2px;
@@ -1133,11 +1823,31 @@ body:has(#theme-aurora:checked) .board-reset-btn:hover {
    Responsive Styles
    ==================================================== */
 @media (max-width: 480px) {
-  .main-title { font-size: 1.8rem; }
-  body:has(#theme-retro:checked) .main-title { font-size: 2.8rem; }
-  .mark { font-size: 2.6rem; }
-  body:has(#theme-retro:checked) .mark { font-size: 3.5rem; }
-  .overlay-title { font-size: 2rem; }
-  body:has(#theme-retro:checked) .overlay-title { font-size: 3rem; }
-  .scoreboard { padding: 10px 14px; }
+  .main-title {
+    font-size: 1.8rem;
+  }
+
+  body:has(#theme-retro:checked) .main-title {
+    font-size: 2.8rem;
+  }
+
+  .mark {
+    font-size: 2.6rem;
+  }
+
+  body:has(#theme-retro:checked) .mark {
+    font-size: 3.5rem;
+  }
+
+  .overlay-title {
+    font-size: 2rem;
+  }
+
+  body:has(#theme-retro:checked) .overlay-title {
+    font-size: 3rem;
+  }
+
+  .scoreboard {
+    padding: 10px 14px;
+  }
 }

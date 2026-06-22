@@ -62,9 +62,10 @@ class TestTicTacToeCSSGame(unittest.TestCase):
         cls.parser.feed(cls.html_content)
 
     def test_inputs_exist(self):
-        """Verify that all 18 radio button inputs exist with proper IDs."""
-        self.assertEqual(len(self.parser.inputs), 18, "Should have 18 radio button inputs (9 for X, 9 for O)")
+        """Verify that all 22 radio button inputs exist with proper IDs."""
+        self.assertEqual(len(self.parser.inputs), 22, "Should have 22 radio button inputs (18 for game cells + 4 for difficulty levels)")
         
+        # Check game cell inputs (18 total)
         for i in range(1, 10):
             id_x = f"cell-{i}-x"
             id_o = f"cell-{i}-o"
@@ -77,6 +78,14 @@ class TestTicTacToeCSSGame(unittest.TestCase):
             self.assertIsNotNone(input_o, f"Input with ID '{id_o}' is missing.")
             self.assertEqual(input_x.get('name'), f"cell-{i}", f"Input '{id_x}' must share name 'cell-{i}' for grouping.")
             self.assertEqual(input_o.get('name'), f"cell-{i}", f"Input '{id_o}' must share name 'cell-{i}' for grouping.")
+        
+        # Check difficulty inputs
+        difficulty_inputs = ['diff-easy', 'diff-medium', 'diff-hard', 'diff-expert']
+        for diff_id in difficulty_inputs:
+            diff_input = next((inp for inp in self.parser.inputs if inp.get('id') == diff_id), None)
+            self.assertIsNotNone(diff_input, f"Difficulty input with ID '{diff_id}' is missing.")
+            self.assertEqual(diff_input.get('type'), 'radio', f"Difficulty input '{diff_id}' must be a radio button.")
+            self.assertEqual(diff_input.get('name'), 'difficulty', f"Difficulty input '{diff_id}' must have name 'difficulty'.")
 
     def test_grid_cells_exist(self):
         """Verify that all 9 cells exist in the grid board."""

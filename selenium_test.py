@@ -64,7 +64,7 @@ def run_tests():
         print("[+] Player X (human) clicked cell-1")
         
         # Wait for the AI delay
-        time.sleep(1.0)
+        time.sleep(1.5)
         
         # Verify Cell 1 has X mark
         mark_cell1_x = driver.find_element(By.CSS_SELECTOR, ".cell-1 .x-mark")
@@ -80,6 +80,62 @@ def run_tests():
         click_element(board_reset)
         time.sleep(0.5)
         
+        # ----------------------------------------------------
+        # 1C. TEST DIFFICULTY LEVEL SLIDER
+        # ----------------------------------------------------
+        print("[+] Testing difficulty levels slider...")
+        difficulty_slider = driver.find_element(By.CLASS_NAME, "difficulty-slider")
+        
+        # Helper to get computed style 'transform'
+        def get_slider_transform():
+            return driver.execute_script("return window.getComputedStyle(arguments[0]).getPropertyValue('transform');", difficulty_slider)
+
+        # Helper to get computed style 'width'
+        def get_slider_width():
+            return driver.execute_script("return window.getComputedStyle(arguments[0]).getPropertyValue('width');", difficulty_slider)
+
+        # Easy (default)
+        easy_transform = get_slider_transform()
+        easy_width = get_slider_width()
+        print(f"[+] EASY slider transform: {easy_transform}, width: {easy_width}")
+
+        # Medium
+        lbl_medium = driver.find_element(By.CLASS_NAME, "lbl-medium")
+        click_element(lbl_medium)
+        time.sleep(0.5)
+        medium_transform = get_slider_transform()
+        medium_width = get_slider_width()
+        print(f"[+] MEDIUM slider transform: {medium_transform}, width: {medium_width}")
+        assert medium_transform != easy_transform, "Slider transform did not change for MEDIUM"
+        assert medium_width != easy_width, "Slider width did not change for MEDIUM"
+
+        # Hard
+        lbl_hard = driver.find_element(By.CLASS_NAME, "lbl-hard")
+        click_element(lbl_hard)
+        time.sleep(0.5)
+        hard_transform = get_slider_transform()
+        hard_width = get_slider_width()
+        print(f"[+] HARD slider transform: {hard_transform}, width: {hard_width}")
+        assert hard_transform != medium_transform, "Slider transform did not change for HARD"
+
+        # Expert
+        lbl_expert = driver.find_element(By.CLASS_NAME, "lbl-expert")
+        click_element(lbl_expert)
+        time.sleep(0.5)
+        expert_transform = get_slider_transform()
+        expert_width = get_slider_width()
+        print(f"[+] EXPERT slider transform: {expert_transform}, width: {expert_width}")
+        assert expert_transform != hard_transform, "Slider transform did not change for EXPERT"
+        assert expert_width != hard_width, "Slider width did not change for EXPERT"
+
+        # Switch back to EASY
+        lbl_easy = driver.find_element(By.CLASS_NAME, "lbl-easy")
+        click_element(lbl_easy)
+        time.sleep(0.5)
+        final_easy_transform = get_slider_transform()
+        assert final_easy_transform == easy_transform, "Slider transform did not return to EASY"
+        print("[+] Difficulty levels slider animation and styles verified successfully!")
+
         # Switch back to VS PLAYER mode for the remaining tests
         lbl_2p = driver.find_element(By.CLASS_NAME, "lbl-2p")
         click_element(lbl_2p)
