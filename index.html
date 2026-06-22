@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Neon Grid (Pure HTML/CSS)</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='25' fill='%230a0b16'/%3E%3Cpath d='M20 20 L45 45 M45 20 L20 45' stroke='%2300f3ff' stroke-width='8' stroke-linecap='round'/%3E%3Ccircle cx='70' cy='70' r='12' stroke='%23ff007f' stroke-width='8' fill='none'/%3E%3Cline x1='50' y1='15' x2='50' y2='85' stroke='rgba(255,255,255,0.15)' stroke-width='4' stroke-linecap='round'/%3E%3Cline x1='15' y1='50' x2='85' y2='50' stroke='rgba(255,255,255,0.15)' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Syncopate:wght@700&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Theme selection inputs at the absolute root -->
+  <input type="radio" name="theme" id="theme-cyberpunk" class="theme-radio" checked>
+  <input type="radio" name="theme" id="theme-retro" class="theme-radio">
+  <input type="radio" name="theme" id="theme-aurora" class="theme-radio">
+
+  <!-- Mode selection inputs at the absolute root -->
+  <input type="radio" name="game-mode" id="mode-2p" class="mode-radio" checked>
+  <input type="radio" name="game-mode" id="mode-ai" class="mode-radio">
+
+  <!-- Background decorative elements -->
+  <div class="stars-bg"></div>
+  <div class="retro-scanlines"></div>
+  <div class="radial-glow"></div>
+
+  <!-- Global Application Wrapper -->
+  <div class="app-wrapper">
+    
+    <!-- Header with Title and Theme Selector -->
+    <header class="main-header">
+      <h1 class="main-title">NEON GRID</h1>
+      
+      <div class="switchers-container">
+        <!-- Theme Switcher Widget -->
+        <div class="theme-switcher">
+          <label for="theme-cyberpunk" class="theme-lbl lbl-cyberpunk">CYBER</label>
+          <label for="theme-retro" class="theme-lbl lbl-retro">ARCADE</label>
+          <label for="theme-aurora" class="theme-lbl lbl-aurora">AURORA</label>
+          <span class="switcher-slider"></span>
+        </div>
+
+        <!-- Mode Switcher Widget -->
+        <div class="mode-switcher">
+          <label for="mode-2p" class="mode-lbl lbl-2p">VS PLAYER</label>
+          <label for="mode-ai" class="mode-lbl lbl-ai">VS COMPUTER</label>
+          <span class="mode-slider"></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Scoreboard Form (persists when board resets) -->
+    <form class="score-form">
+      <div class="scoreboard">
+        <div class="score-player player-x-box">
+          <div class="player-label">X-CORPS</div>
+          <div class="tally-box">
+            <input type="checkbox" id="score-x-1" class="score-cb">
+            <label for="score-x-1" class="score-star">★</label>
+            <input type="checkbox" id="score-x-2" class="score-cb">
+            <label for="score-x-2" class="score-star">★</label>
+            <input type="checkbox" id="score-x-3" class="score-cb">
+            <label for="score-x-3" class="score-star">★</label>
+          </div>
+        </div>
+        
+        <div class="score-vs">VS</div>
+        
+        <div class="score-player player-o-box">
+          <div class="player-label">O-SECT</div>
+          <div class="tally-box">
+            <input type="checkbox" id="score-o-1" class="score-cb">
+            <label for="score-o-1" class="score-star">★</label>
+            <input type="checkbox" id="score-o-2" class="score-cb">
+            <label for="score-o-2" class="score-star">★</label>
+            <input type="checkbox" id="score-o-3" class="score-cb">
+            <label for="score-o-3" class="score-star">★</label>
+          </div>
+        </div>
+      </div>
+      <button type="reset" class="reset-scores-btn">RESET TALLIES</button>
+    </form>
+
+    <!-- Main Board Form (for cell inputs and gameplay reset) -->
+    <form class="board-form">
+      <!-- Cell 1 State Inputs -->
+      <input type="radio" name="cell-1" id="cell-1-x" class="input-x">
+      <input type="radio" name="cell-1" id="cell-1-o" class="input-o">
+
+      <!-- Cell 2 State Inputs -->
+      <input type="radio" name="cell-2" id="cell-2-x" class="input-x">
+      <input type="radio" name="cell-2" id="cell-2-o" class="input-o">
+
+      <!-- Cell 3 State Inputs -->
+      <input type="radio" name="cell-3" id="cell-3-x" class="input-x">
+      <input type="radio" name="cell-3" id="cell-3-o" class="input-o">
+
+      <!-- Cell 4 State Inputs -->
+      <input type="radio" name="cell-4" id="cell-4-x" class="input-x">
+      <input type="radio" name="cell-4" id="cell-4-o" class="input-o">
+
+      <!-- Cell 5 State Inputs -->
+      <input type="radio" name="cell-5" id="cell-5-x" class="input-x">
+      <input type="radio" name="cell-5" id="cell-5-o" class="input-o">
+
+      <!-- Cell 6 State Inputs -->
+      <input type="radio" name="cell-6" id="cell-6-x" class="input-x">
+      <input type="radio" name="cell-6" id="cell-6-o" class="input-o">
+
+      <!-- Cell 7 State Inputs -->
+      <input type="radio" name="cell-7" id="cell-7-x" class="input-x">
+      <input type="radio" name="cell-7" id="cell-7-o" class="input-o">
+
+      <!-- Cell 8 State Inputs -->
+      <input type="radio" name="cell-8" id="cell-8-x" class="input-x">
+      <input type="radio" name="cell-8" id="cell-8-o" class="input-o">
+
+      <!-- Cell 9 State Inputs -->
+      <input type="radio" name="cell-9" id="cell-9-x" class="input-x">
+      <input type="radio" name="cell-9" id="cell-9-o" class="input-o">
+
+      <!-- Board UI & Wrapper (Dynamic 3D Tilt perspective) -->
+      <div class="board-ui">
+        
+        <div class="turn-indicator-box">
+          <div class="turn-indicator turn-x">
+            <span class="pulse-cyan"></span> X's TURN
+          </div>
+          <div class="turn-indicator turn-o">
+            <span class="pulse-pink"></span> O's TURN
+          </div>
+        </div>
+
+        <div class="board-perspective">
+          <div class="board">
+            <!-- Cell 1 -->
+            <div class="cell cell-1">
+              <label for="cell-1-x" class="label-x" aria-label="Mark cell 1 as X"></label>
+              <label for="cell-1-o" class="label-o" aria-label="Mark cell 1 as O"></label>
+              <div class="mark x-mark">X</div>
+              <div class="mark o-mark">O</div>
+            </div>
+
+            <!-- Cell 2 -->
+            <div class="cell cell-2">
+              <label for="cell-2-x" class="label-x" aria-label="Mark cell 2 as X"></label>
+              <label for="cell-2-o" class="label-o" aria-label="Mark cell 2 as O"></label>
+              <div class="mark x-mark">X</div>
+              <div class="mark o-mark">O</div>
+            </div>
+
+            <!-- Cell 3 -->
+            <div class="cell cell-3">
+              <label for="cell-3-x" class="label-x" aria-label="Mark cell 3 as X"></label>
+              <label for="cell-3-o" class="label-o" aria-label="Mark cell 3 as O"></label>
+              <div class="mark x-mark">X</div>
+              <div class="mark o-mark">O</div>
+            </div>
+
+            <!-- Cell 4 -->
+            <div class="cell cell-4">
+              <label for="cell-4-x" class="label-x" aria-label="Mark cell 4 as X"></label>
+              <label for="cell-4-o" class="label-o" aria-label="Mark cell 4 as O"></label>
+              <div class="mark x-mark">X</div>
+              <div class="mark o-mark">O</div>
+            </div>
+
+            <!-- Cell 5 -->
+            <div class="cell cell-5">
+              <label for="cell-5-x" class="label-x" aria-label="Mark cell 5 as X"></label>
+              <label for="cell-5-o" class="label-o" aria-label="Mark cell 5 as O"></label>
+              <div class="mark x-mark">X</div>
+              <div class="mark o-mark">O</div>
+            </div>
+
+            <!-- Cell 6 -->
+            <div class="cell cell-6">
+              <label for="cell-6-x" class="label-x" aria-label="Mark cell 6 as X"></label>
+              <label for="cell-6-o" class="label-o" aria-label="Mark cell 6 as O"></label>
+              <div class="mark x-mark">X</div>
+              <div class="mark o-mark">O</div>
+            </div>
+
+            <!-- Cell 7 -->
+            <div class="cell cell-7">
+              <label for="cell-7-x" class="label-x" aria-label="Mark cell 7 as X"></label>
+              <label for="cell-7-o" class="label-o" aria-label="Mark cell 7 as O"></label>
+              <div class="mark x-mark">X</div>
+              <div class="mark o-mark">O</div>
+            </div>
+
+            <!-- Cell 8 -->
+            <div class="cell cell-8">
+              <label for="cell-8-x" class="label-x" aria-label="Mark cell 8 as X"></label>
+              <label for="cell-8-o" class="label-o" aria-label="Mark cell 8 as O"></label>
+              <div class="mark x-mark">X</div>
+              <div class="mark o-mark">O</div>
+            </div>
+
+            <!-- Cell 9 -->
+            <div class="cell cell-9">
+              <label for="cell-9-x" class="label-x" aria-label="Mark cell 9 as X"></label>
+              <label for="cell-9-o" class="label-o" aria-label="Mark cell 9 as O"></label>
+              <div class="mark x-mark">X</div>
+              <div class="mark o-mark">O</div>
+            </div>
+
+            <!-- Strike-through Win Lines -->
+            <div class="win-line row-1"></div>
+            <div class="win-line row-2"></div>
+            <div class="win-line row-3"></div>
+            <div class="win-line col-1"></div>
+            <div class="win-line col-2"></div>
+            <div class="win-line col-3"></div>
+            <div class="win-line diag-1"></div>
+            <div class="win-line diag-2"></div>
+          </div>
+
+          <!-- Overlays (Win / Draw Screen) -->
+          <div class="overlay win-overlay">
+            <div class="overlay-content">
+              <h2 class="overlay-title win-x-title">VICTORY</h2>
+              <h2 class="overlay-title win-o-title">VICTORY</h2>
+              <p class="winner-text win-x-text">PLAYER X DOMINATED THE GRID</p>
+              <p class="winner-text win-o-text">PLAYER O DOMINATED THE GRID</p>
+              <button type="reset" class="neon-btn reset-btn-game">PLAY AGAIN</button>
+            </div>
+          </div>
+
+          <div class="overlay draw-overlay">
+            <div class="overlay-content">
+              <h2 class="overlay-title draw-title">DRAW</h2>
+              <p class="winner-text">THE GRID REMAINS UNCONQUERED</p>
+              <button type="reset" class="neon-btn reset-btn-game">PLAY AGAIN</button>
+            </div>
+          </div>
+        </div>
+
+        <button type="reset" class="board-reset-btn">
+          <span class="icon">↺</span> RESET BOARD
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Smart Minimax AI Player logic -->
+  <script>
+    (function() {
+      const boardForm = document.querySelector('.board-form');
+      const modeAiInput = document.getElementById('mode-ai');
+      const winCombos = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+      ];
+
+      let isThinking = false;
+
+      boardForm.addEventListener('change', handleBoardChange);
+      boardForm.addEventListener('reset', handleBoardReset);
+
+      function handleBoardReset() {
+        isThinking = false;
+      }
+
+      function handleBoardChange() {
+        if (!modeAiInput.checked || isThinking) return;
+
+        const board = [];
+        for (let i = 1; i <= 9; i++) {
+          const xChecked = document.getElementById(`cell-${i}-x`).checked;
+          const oChecked = document.getElementById(`cell-${i}-o`).checked;
+          if (xChecked) board.push('X');
+          else if (oChecked) board.push('O');
+          else board.push(null);
+        }
+
+        const xCount = board.filter(c => c === 'X').length;
+        const oCount = board.filter(c => c === 'O').length;
+
+        // Computer is Player O and moves when X has placed more marks
+        if (xCount > oCount && !checkWin(board, 'X') && !checkDraw(board)) {
+          triggerComputerMove(board);
+        }
+      }
+
+      function triggerComputerMove(board) {
+        isThinking = true;
+        
+        // Disable cell clicking during computing delay
+        const boardEl = document.querySelector('.board');
+        boardEl.style.pointerEvents = 'none';
+
+        setTimeout(() => {
+          if (!isThinking) {
+            boardEl.style.pointerEvents = 'auto';
+            return;
+          }
+          
+          const bestMove = getBestMove(board);
+          if (bestMove !== -1) {
+            const radioO = document.getElementById(`cell-${bestMove + 1}-o`);
+            if (radioO) {
+              radioO.checked = true;
+              radioO.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+          }
+          
+          boardEl.style.pointerEvents = 'auto';
+          isThinking = false;
+        }, 500);
+      }
+
+      function checkWin(board, player) {
+        return winCombos.some(combo => combo.every(idx => board[idx] === player));
+      }
+
+      function checkDraw(board) {
+        return board.every(c => c !== null);
+      }
+
+      function minimax(board, depth, isMax) {
+        if (checkWin(board, 'O')) return 10 - depth;
+        if (checkWin(board, 'X')) return depth - 10;
+        if (checkDraw(board)) return 0;
+
+        if (isMax) {
+          let best = -Infinity;
+          for (let i = 0; i < 9; i++) {
+            if (board[i] === null) {
+              board[i] = 'O';
+              best = Math.max(best, minimax(board, depth + 1, false));
+              board[i] = null;
+            }
+          }
+          return best;
+        } else {
+          let best = Infinity;
+          for (let i = 0; i < 9; i++) {
+            if (board[i] === null) {
+              board[i] = 'X';
+              best = Math.min(best, minimax(board, depth + 1, true));
+              board[i] = null;
+            }
+          }
+          return best;
+        }
+      }
+
+      function getBestMove(board) {
+        let bestVal = -Infinity;
+        let bestMove = -1;
+        for (let i = 0; i < 9; i++) {
+          if (board[i] === null) {
+            board[i] = 'O';
+            let moveVal = minimax(board, 0, false);
+            board[i] = null;
+            if (moveVal > bestVal) {
+              bestMove = i;
+              bestVal = moveVal;
+            }
+          }
+        }
+        return bestMove;
+      }
+    })();
+  </script>
+</body>
+</html>

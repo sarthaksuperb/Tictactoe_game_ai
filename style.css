@@ -1,0 +1,1143 @@
+/* ====================================================
+   Interactive Neon Grid - Stylesheet & Logic
+   Pure CSS - No JavaScript
+   ==================================================== */
+
+:root {
+  --cyan: #00f3ff;
+  --cyan-rgb: 0, 243, 255;
+  --pink: #ff007f;
+  --pink-rgb: 255, 0, 127;
+  --neutral-glow: #9b9dad;
+  --bg-dark: #0a0b16;
+  --card-bg: rgba(18, 20, 38, 0.45);
+  --border-glow: rgba(255, 255, 255, 0.08);
+  --glow-opacity: 0.2;
+  --text-color: #ffffff;
+  --font-family-title: 'Syncopate', sans-serif;
+  --font-family-body: 'Outfit', sans-serif;
+  --board-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 0 1px 1px rgba(255, 255, 255, 0.05);
+}
+
+/* ====================================================
+   Themes Configuration via Sibling Root Selectors
+   ==================================================== */
+
+/* Theme 2: Retro Arcade (Matrix / Fallout Green & Amber) */
+body:has(#theme-retro:checked) {
+  --cyan: #39ff14; /* Matrix Neon Green */
+  --cyan-rgb: 57, 255, 20;
+  --pink: #ffb000; /* Amber Yellow */
+  --pink-rgb: 255, 176, 0;
+  --neutral-glow: #7f9f7f;
+  --bg-dark: #050705;
+  --card-bg: rgba(10, 16, 10, 0.8);
+  --border-glow: rgba(57, 255, 20, 0.2);
+  --glow-opacity: 0.1;
+  --text-color: #39ff14;
+  --font-family-title: 'VT323', monospace;
+  --font-family-body: 'VT323', monospace;
+  --board-shadow: 0 0 25px rgba(57, 255, 20, 0.15), inset 0 0 2px 2px rgba(57, 255, 20, 0.1);
+}
+
+/* Theme 3: Aurora Light (Glassmorphic Light Mode) */
+body:has(#theme-aurora:checked) {
+  --cyan: #6c5ce7; /* Lilac */
+  --cyan-rgb: 108, 92, 231;
+  --pink: #e84393; /* Berry */
+  --pink-rgb: 232, 67, 147;
+  --neutral-glow: #636e72;
+  --bg-dark: #edf2f9;
+  --card-bg: rgba(255, 255, 255, 0.7);
+  --border-glow: rgba(108, 92, 231, 0.15);
+  --glow-opacity: 0.05;
+  --text-color: #2d3436;
+  --font-family-title: 'Outfit', sans-serif;
+  --font-family-body: 'Outfit', sans-serif;
+  --board-shadow: 0 20px 45px rgba(108, 92, 231, 0.12), inset 0 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+/* ====================================================
+   Base Elements Setup
+   ==================================================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+body {
+  background-color: var(--bg-dark);
+  font-family: var(--font-family-body), sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  color: var(--text-color);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Hide Radio Buttons */
+.theme-radio,
+input[type="radio"],
+.score-cb {
+  display: none !important;
+}
+
+/* Background Visual Effects */
+.stars-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px);
+  background-size: 550px 550px, 350px 350px;
+  background-position: 0 0, 40px 60px;
+  opacity: 0.12;
+  z-index: -2;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+body:has(#theme-aurora:checked) .stars-bg {
+  opacity: 0; /* Hide stars in light theme */
+}
+
+/* Retro Scanlines (CRT screen effect) */
+.retro-scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  z-index: 99;
+  opacity: 0;
+  pointer-events: none;
+}
+
+body:has(#theme-retro:checked) .retro-scanlines {
+  opacity: 0.15;
+  animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+  0% { opacity: 0.15; }
+  50% { opacity: 0.13; }
+  100% { opacity: 0.17; }
+}
+
+/* Radial Backdrop Glow */
+.radial-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(var(--cyan-rgb), 0.08) 0%, rgba(var(--pink-rgb), 0.08) 50%, transparent 70%);
+  z-index: -1;
+  pointer-events: none;
+  filter: blur(40px);
+  transition: background 0.4s ease;
+}
+
+body:has(#theme-aurora:checked) .radial-glow {
+  background: radial-gradient(circle, rgba(108, 92, 231, 0.1) 0%, rgba(232, 67, 147, 0.08) 60%, transparent 80%);
+}
+
+/* Wrapper Layout */
+.app-wrapper {
+  width: 100%;
+  max-width: 440px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ====================================================
+   Header & Theme Switcher Widget
+   ==================================================== */
+.main-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  text-align: center;
+}
+
+.main-title {
+  font-family: var(--font-family-title), sans-serif;
+  font-size: 2.3rem;
+  font-weight: 800;
+  letter-spacing: 4px;
+  background: linear-gradient(90deg, var(--cyan), var(--pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(var(--cyan-rgb), var(--glow-opacity));
+}
+
+body:has(#theme-retro:checked) .main-title {
+  font-size: 3.5rem;
+  letter-spacing: 2px;
+  background: none;
+  -webkit-text-fill-color: var(--cyan);
+  text-shadow: 0 0 10px var(--cyan);
+}
+
+.switchers-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.theme-switcher,
+.mode-switcher {
+  position: relative;
+  display: flex;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-glow);
+  border-radius: 50px;
+  padding: 4px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  justify-content: space-between;
+  backdrop-filter: blur(10px);
+}
+
+.theme-switcher {
+  width: 250px;
+}
+
+.mode-switcher {
+  width: 240px;
+}
+
+body:has(#theme-aurora:checked) .theme-switcher,
+body:has(#theme-aurora:checked) .mode-switcher {
+  background: rgba(0, 0, 0, 0.03);
+  box-shadow: 0 5px 15px rgba(108, 92, 231, 0.05);
+}
+
+.theme-lbl,
+.mode-lbl {
+  position: relative;
+  flex: 1;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 8px 0;
+  cursor: pointer;
+  z-index: 3;
+  color: var(--neutral-glow);
+  transition: color 0.3s;
+  letter-spacing: 1px;
+}
+
+body:has(#theme-retro:checked) .theme-lbl,
+body:has(#theme-retro:checked) .mode-lbl {
+  font-size: 0.95rem;
+  padding: 4px 0;
+}
+
+/* Slide Slider background indicator */
+.switcher-slider,
+.mode-slider {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  border-radius: 50px;
+  background: linear-gradient(90deg, rgba(var(--cyan-rgb), 0.2), rgba(var(--pink-rgb), 0.2));
+  border: 1px solid rgba(var(--cyan-rgb), 0.3);
+  z-index: 1;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body:has(#theme-retro:checked) .switcher-slider,
+body:has(#theme-retro:checked) .mode-slider {
+  background: rgba(57, 255, 20, 0.15);
+  border: 1px solid var(--cyan);
+}
+
+body:has(#theme-aurora:checked) .switcher-slider,
+body:has(#theme-aurora:checked) .mode-slider {
+  background: rgba(108, 92, 231, 0.1);
+  border: 1px solid var(--cyan);
+}
+
+/* Theme label active coloring */
+body:has(#theme-cyberpunk:checked) .lbl-cyberpunk,
+body:has(#theme-retro:checked) .lbl-retro,
+body:has(#theme-aurora:checked) .lbl-aurora {
+  color: var(--text-color);
+  text-shadow: 0 0 5px var(--cyan);
+}
+
+/* Mode label active coloring */
+body:has(#mode-2p:checked) .lbl-2p,
+body:has(#mode-ai:checked) .lbl-ai {
+  color: var(--text-color);
+  text-shadow: 0 0 5px var(--cyan);
+}
+
+body:has(#theme-cyberpunk:checked) .switcher-slider {
+  left: 4px;
+  width: 78px;
+}
+
+body:has(#theme-retro:checked) .switcher-slider {
+  left: 85px;
+  width: 80px;
+}
+
+body:has(#theme-aurora:checked) .switcher-slider {
+  left: 167px;
+  width: 78px;
+}
+
+body:has(#mode-2p:checked) .mode-slider {
+  left: 4px;
+  width: 110px;
+}
+
+body:has(#mode-ai:checked) .mode-slider {
+  left: 118px;
+  width: 118px;
+}
+
+
+/* ====================================================
+   Persistent Scoreboard Tallies
+   ==================================================== */
+.score-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.scoreboard {
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--border-glow);
+  border-radius: 16px;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(15px);
+  box-shadow: var(--board-shadow);
+}
+
+.score-player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.player-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--neutral-glow);
+}
+
+body:has(#theme-retro:checked) .player-label {
+  font-size: 1.1rem;
+}
+
+.tally-box {
+  display: flex;
+  gap: 4px;
+}
+
+/* Star Score tallies styles */
+.score-star {
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  text-shadow: none;
+}
+
+body:has(#theme-aurora:checked) .score-star {
+  color: rgba(0, 0, 0, 0.06);
+}
+
+/* Player X score coloring */
+.player-x-box .score-cb:checked + .score-star {
+  color: var(--cyan);
+  text-shadow: 0 0 10px var(--cyan);
+  transform: scale(1.15);
+}
+
+/* Player O score coloring */
+.player-o-box .score-cb:checked + .score-star {
+  color: var(--pink);
+  text-shadow: 0 0 10px var(--pink);
+  transform: scale(1.15);
+}
+
+.score-vs {
+  font-family: var(--font-family-title), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--neutral-glow);
+  letter-spacing: 2px;
+}
+
+body:has(#theme-retro:checked) .score-vs {
+  font-size: 1.5rem;
+}
+
+.reset-scores-btn {
+  background: transparent;
+  border: none;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--neutral-glow);
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 4px;
+  transition: all 0.3s;
+  text-transform: uppercase;
+}
+
+body:has(#theme-retro:checked) .reset-scores-btn {
+  font-size: 0.95rem;
+}
+
+.reset-scores-btn:hover {
+  color: var(--text-color);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+body:has(#theme-aurora:checked) .reset-scores-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+
+/* ====================================================
+   Gameplay Container & UI Layout
+   ==================================================== */
+.board-form {
+  width: 100%;
+}
+
+.board-ui {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.turn-indicator-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-glow);
+  border-radius: 50px;
+  padding: 6px 20px;
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+}
+
+body:has(#theme-aurora:checked) .turn-indicator-box {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.turn-indicator {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+body:has(#theme-retro:checked) .turn-indicator {
+  font-size: 1.2rem;
+}
+
+.turn-x {
+  color: var(--cyan);
+  text-shadow: 0 0 8px rgba(var(--cyan-rgb), 0.4);
+}
+
+.turn-o {
+  color: var(--pink);
+  text-shadow: 0 0 8px rgba(var(--pink-rgb), 0.4);
+}
+
+.pulse-cyan, .pulse-pink {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: pulse-glow 1.2s infinite alternate;
+}
+
+.pulse-cyan { background-color: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+.pulse-pink { background-color: var(--pink); box-shadow: 0 0 6px var(--pink); }
+
+@keyframes pulse-glow {
+  0% { transform: scale(0.85); opacity: 0.5; }
+  100% { transform: scale(1.25); opacity: 1; }
+}
+
+
+/* ====================================================
+   3D Board Perspective Tilt System
+   ==================================================== */
+.board-perspective {
+  position: relative;
+  width: 100%;
+  perspective: 900px;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+.board {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 12px;
+  aspect-ratio: 1 / 1;
+  background: var(--card-bg);
+  border: 1px solid var(--border-glow);
+  border-radius: 20px;
+  padding: 16px;
+  backdrop-filter: blur(15px);
+  box-shadow: var(--board-shadow);
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+}
+
+/* 3D Tilt Logic using :has() relational selector */
+.board:has(.cell-1:hover) { transform: rotateX(6deg) rotateY(-6deg); }
+.board:has(.cell-2:hover) { transform: rotateX(6deg) rotateY(0deg); }
+.board:has(.cell-3:hover) { transform: rotateX(6deg) rotateY(6deg); }
+.board:has(.cell-4:hover) { transform: rotateX(0deg) rotateY(-6deg); }
+.board:has(.cell-5:hover) { transform: rotateX(0deg) rotateY(0deg); }
+.board:has(.cell-6:hover) { transform: rotateX(0deg) rotateY(6deg); }
+.board:has(.cell-7:hover) { transform: rotateX(-6deg) rotateY(-6deg); }
+.board:has(.cell-8:hover) { transform: rotateX(-6deg) rotateY(0deg); }
+.board:has(.cell-9:hover) { transform: rotateX(-6deg) rotateY(6deg); }
+
+/* Board Cells */
+.cell {
+  position: relative;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-style: preserve-3d;
+  transform: translateZ(0);
+}
+
+body:has(#theme-aurora:checked) .cell {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.03);
+}
+
+.cell:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.06);
+  transform: translateZ(10px); /* 3D pop depth */
+}
+
+body:has(#theme-aurora:checked) .cell:hover {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(108, 92, 231, 0.2);
+}
+
+/* Cell Labels */
+.cell label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Cell Marks */
+.mark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-family-title), sans-serif;
+  font-size: 3.2rem;
+  font-weight: 700;
+  transform: translateZ(15px); /* Lift markers above cells */
+  animation: pop-mark 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+body:has(#theme-retro:checked) .mark {
+  font-size: 4.5rem;
+}
+
+@keyframes pop-mark {
+  0% { transform: scale(0.5) translateZ(0); opacity: 0; }
+  100% { transform: scale(1) translateZ(15px); opacity: 1; }
+}
+
+.x-mark {
+  color: var(--cyan);
+  text-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.7), 0 0 30px rgba(var(--cyan-rgb), 0.3);
+}
+
+.o-mark {
+  color: var(--pink);
+  text-shadow: 0 0 15px rgba(var(--pink-rgb), 0.7), 0 0 30px rgba(var(--pink-rgb), 0.3);
+}
+
+body:has(#theme-aurora:checked) .x-mark,
+body:has(#theme-aurora:checked) .o-mark {
+  text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+
+/* ====================================================
+   Alternating Turn Toggles (State Logic)
+   ==================================================== */
+.turn-indicator.turn-x { display: flex; }
+.cell label.label-x { display: flex; }
+.cell label.label-o { display: none; }
+
+/* 1 checked -> O's turn */
+input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-x { display: none; }
+input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-o { display: flex; }
+input[name^='cell-']:checked ~ .board-ui .label-x { display: none; }
+input[name^='cell-']:checked ~ .board-ui .label-o { display: flex; }
+
+/* 2 checked -> X's turn */
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-x { display: flex; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-o { display: none; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-x { display: flex; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-o { display: none; }
+
+/* 3 checked -> O's turn */
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-x { display: none; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-o { display: flex; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-x { display: none; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-o { display: flex; }
+
+/* 4 checked -> X's turn */
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-x { display: flex; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-o { display: none; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-x { display: flex; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-o { display: none; }
+
+/* 5 checked -> O's turn */
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-x { display: none; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-o { display: flex; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-x { display: none; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-o { display: flex; }
+
+/* 6 checked -> X's turn */
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-x { display: flex; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-o { display: none; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-x { display: flex; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-o { display: none; }
+
+/* 7 checked -> O's turn */
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-x { display: none; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-o { display: flex; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-x { display: none; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-o { display: flex; }
+
+/* 8 checked -> X's turn */
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-x { display: flex; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .turn-indicator.turn-o { display: none; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-x { display: flex; }
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .label-o { display: none; }
+
+
+/* ====================================================
+   Individual Checked Cell Overrides
+   ==================================================== */
+#cell-1-x:checked ~ .board-ui .cell-1 label, #cell-1-o:checked ~ .board-ui .cell-1 label,
+#cell-2-x:checked ~ .board-ui .cell-2 label, #cell-2-o:checked ~ .board-ui .cell-2 label,
+#cell-3-x:checked ~ .board-ui .cell-3 label, #cell-3-o:checked ~ .board-ui .cell-3 label,
+#cell-4-x:checked ~ .board-ui .cell-4 label, #cell-4-o:checked ~ .board-ui .cell-4 label,
+#cell-5-x:checked ~ .board-ui .cell-5 label, #cell-5-o:checked ~ .board-ui .cell-5 label,
+#cell-6-x:checked ~ .board-ui .cell-6 label, #cell-6-o:checked ~ .board-ui .cell-6 label,
+#cell-7-x:checked ~ .board-ui .cell-7 label, #cell-7-o:checked ~ .board-ui .cell-7 label,
+#cell-8-x:checked ~ .board-ui .cell-8 label, #cell-8-o:checked ~ .board-ui .cell-8 label,
+#cell-9-x:checked ~ .board-ui .cell-9 label, #cell-9-o:checked ~ .board-ui .cell-9 label {
+  display: none !important;
+  pointer-events: none;
+}
+
+#cell-1-x:checked ~ .board-ui .cell-1 .x-mark, #cell-2-x:checked ~ .board-ui .cell-2 .x-mark,
+#cell-3-x:checked ~ .board-ui .cell-3 .x-mark, #cell-4-x:checked ~ .board-ui .cell-4 .x-mark,
+#cell-5-x:checked ~ .board-ui .cell-5 .x-mark, #cell-6-x:checked ~ .board-ui .cell-6 .x-mark,
+#cell-7-x:checked ~ .board-ui .cell-7 .x-mark, #cell-8-x:checked ~ .board-ui .cell-8 .x-mark,
+#cell-9-x:checked ~ .board-ui .cell-9 .x-mark {
+  display: flex;
+}
+
+#cell-1-o:checked ~ .board-ui .cell-1 .o-mark, #cell-2-o:checked ~ .board-ui .cell-2 .o-mark,
+#cell-3-o:checked ~ .board-ui .cell-3 .o-mark, #cell-4-o:checked ~ .board-ui .cell-4 .o-mark,
+#cell-5-o:checked ~ .board-ui .cell-5 .o-mark, #cell-6-o:checked ~ .board-ui .cell-6 .o-mark,
+#cell-7-o:checked ~ .board-ui .cell-7 .o-mark, #cell-8-o:checked ~ .board-ui .cell-8 .o-mark,
+#cell-9-o:checked ~ .board-ui .cell-9 .o-mark {
+  display: flex;
+}
+
+/* Glowing Border highlights for active inputs */
+#cell-1-x:checked ~ .board-ui .cell-1 { background: rgba(var(--cyan-rgb), 0.05); border-color: rgba(var(--cyan-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1); }
+#cell-1-o:checked ~ .board-ui .cell-1 { background: rgba(var(--pink-rgb), 0.05); border-color: rgba(var(--pink-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1); }
+#cell-2-x:checked ~ .board-ui .cell-2 { background: rgba(var(--cyan-rgb), 0.05); border-color: rgba(var(--cyan-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1); }
+#cell-2-o:checked ~ .board-ui .cell-2 { background: rgba(var(--pink-rgb), 0.05); border-color: rgba(var(--pink-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1); }
+#cell-3-x:checked ~ .board-ui .cell-3 { background: rgba(var(--cyan-rgb), 0.05); border-color: rgba(var(--cyan-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1); }
+#cell-3-o:checked ~ .board-ui .cell-3 { background: rgba(var(--pink-rgb), 0.05); border-color: rgba(var(--pink-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1); }
+#cell-4-x:checked ~ .board-ui .cell-4 { background: rgba(var(--cyan-rgb), 0.05); border-color: rgba(var(--cyan-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1); }
+#cell-4-o:checked ~ .board-ui .cell-4 { background: rgba(var(--pink-rgb), 0.05); border-color: rgba(var(--pink-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1); }
+#cell-5-x:checked ~ .board-ui .cell-5 { background: rgba(var(--cyan-rgb), 0.05); border-color: rgba(var(--cyan-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1); }
+#cell-5-o:checked ~ .board-ui .cell-5 { background: rgba(var(--pink-rgb), 0.05); border-color: rgba(var(--pink-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1); }
+#cell-6-x:checked ~ .board-ui .cell-6 { background: rgba(var(--cyan-rgb), 0.05); border-color: rgba(var(--cyan-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1); }
+#cell-6-o:checked ~ .board-ui .cell-6 { background: rgba(var(--pink-rgb), 0.05); border-color: rgba(var(--pink-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1); }
+#cell-7-x:checked ~ .board-ui .cell-7 { background: rgba(var(--cyan-rgb), 0.05); border-color: rgba(var(--cyan-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1); }
+#cell-7-o:checked ~ .board-ui .cell-7 { background: rgba(var(--pink-rgb), 0.05); border-color: rgba(var(--pink-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1); }
+#cell-8-x:checked ~ .board-ui .cell-8 { background: rgba(var(--cyan-rgb), 0.05); border-color: rgba(var(--cyan-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1); }
+#cell-8-o:checked ~ .board-ui .cell-8 { background: rgba(var(--pink-rgb), 0.05); border-color: rgba(var(--pink-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1); }
+#cell-9-x:checked ~ .board-ui .cell-9 { background: rgba(var(--cyan-rgb), 0.05); border-color: rgba(var(--cyan-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.1); }
+#cell-9-o:checked ~ .board-ui .cell-9 { background: rgba(var(--pink-rgb), 0.05); border-color: rgba(var(--pink-rgb), 0.25); box-shadow: 0 0 15px rgba(var(--pink-rgb), 0.1); }
+
+
+/* ====================================================
+   Cell Hover Previews
+   ==================================================== */
+.label-x::after,
+.label-o::after {
+  opacity: 0;
+  font-family: var(--font-family-title), sans-serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  transform: scale(0.85);
+}
+
+body:has(#theme-retro:checked) .label-x::after,
+body:has(#theme-retro:checked) .label-o::after {
+  font-size: 3.5rem;
+}
+
+.label-x::after {
+  content: 'X';
+  color: rgba(var(--cyan-rgb), 0.12);
+  text-shadow: 0 0 8px rgba(var(--cyan-rgb), 0.2);
+}
+
+.label-o::after {
+  content: 'O';
+  color: rgba(var(--pink-rgb), 0.12);
+  text-shadow: 0 0 8px rgba(var(--pink-rgb), 0.2);
+}
+
+body:has(#theme-aurora:checked) .label-x::after,
+body:has(#theme-aurora:checked) .label-o::after {
+  text-shadow: none;
+}
+
+.label-x:hover::after,
+.label-o:hover::after {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+
+/* ====================================================
+   Glowing Win Line Strike-through Lines
+   ==================================================== */
+.win-line {
+  position: absolute;
+  background: linear-gradient(90deg, var(--cyan), var(--pink));
+  box-shadow: 
+    0 0 12px rgba(var(--cyan-rgb), 0.8),
+    0 0 20px rgba(var(--pink-rgb), 0.8);
+  border-radius: 4px;
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.3s ease;
+}
+
+body:has(#theme-aurora:checked) .win-line {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* Horizontal Rows */
+.win-line.row-1 { top: 16.66%; left: 5%; width: 90%; height: 6px; transform: scaleX(0); transform-origin: left center; }
+.win-line.row-2 { top: 50%; left: 5%; width: 90%; height: 6px; transform: scaleX(0); transform-origin: left center; }
+.win-line.row-3 { top: 83.33%; left: 5%; width: 90%; height: 6px; transform: scaleX(0); transform-origin: left center; }
+
+/* Vertical Columns */
+.win-line.col-1 { left: 16.66%; top: 5%; height: 90%; width: 6px; transform: scaleY(0); transform-origin: top center; }
+.win-line.col-2 { left: 50%; top: 5%; height: 90%; width: 6px; transform: scaleY(0); transform-origin: top center; }
+.win-line.col-3 { left: 83.33%; top: 5%; height: 90%; width: 6px; transform: scaleY(0); transform-origin: top center; }
+
+/* Diagonals */
+.win-line.diag-1 {
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 6px;
+  transform: translate(-50%, -50%) rotate(45deg) scaleX(0);
+  transform-origin: center center;
+}
+
+.win-line.diag-2 {
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 6px;
+  transform: translate(-50%, -50%) rotate(-45deg) scaleX(0);
+  transform-origin: center center;
+}
+
+/* Win Line Activation selectors */
+
+/* Rows */
+#cell-1-x:checked ~ #cell-2-x:checked ~ #cell-3-x:checked ~ .board-ui .win-line.row-1,
+#cell-4-x:checked ~ #cell-5-x:checked ~ #cell-6-x:checked ~ .board-ui .win-line.row-2,
+#cell-7-x:checked ~ #cell-8-x:checked ~ #cell-9-x:checked ~ .board-ui .win-line.row-3,
+#cell-1-o:checked ~ #cell-2-o:checked ~ #cell-3-o:checked ~ .board-ui .win-line.row-1,
+#cell-4-o:checked ~ #cell-5-o:checked ~ #cell-6-o:checked ~ .board-ui .win-line.row-2,
+#cell-7-o:checked ~ #cell-8-o:checked ~ #cell-9-o:checked ~ .board-ui .win-line.row-3 {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* Columns */
+#cell-1-x:checked ~ #cell-4-x:checked ~ #cell-7-x:checked ~ .board-ui .win-line.col-1,
+#cell-2-x:checked ~ #cell-5-x:checked ~ #cell-8-x:checked ~ .board-ui .win-line.col-2,
+#cell-3-x:checked ~ #cell-6-x:checked ~ #cell-9-x:checked ~ .board-ui .win-line.col-3,
+#cell-1-o:checked ~ #cell-4-o:checked ~ #cell-7-o:checked ~ .board-ui .win-line.col-1,
+#cell-2-o:checked ~ #cell-5-o:checked ~ #cell-8-o:checked ~ .board-ui .win-line.col-2,
+#cell-3-o:checked ~ #cell-6-o:checked ~ #cell-9-o:checked ~ .board-ui .win-line.col-3 {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+/* Diagonals */
+#cell-1-x:checked ~ #cell-5-x:checked ~ #cell-9-x:checked ~ .board-ui .win-line.diag-1,
+#cell-1-o:checked ~ #cell-5-o:checked ~ #cell-9-o:checked ~ .board-ui .win-line.diag-1 {
+  opacity: 1;
+  transform: translate(-50%, -50%) rotate(45deg) scaleX(1);
+}
+
+#cell-3-x:checked ~ #cell-5-x:checked ~ #cell-7-x:checked ~ .board-ui .win-line.diag-2,
+#cell-3-o:checked ~ #cell-5-o:checked ~ #cell-7-o:checked ~ .board-ui .win-line.diag-2 {
+  opacity: 1;
+  transform: translate(-50%, -50%) rotate(-45deg) scaleX(1);
+}
+
+
+/* ====================================================
+   Overlay Panels (Win & Draw Screens)
+   ==================================================== */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(8, 9, 21, 0.7);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  animation: fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  pointer-events: auto;
+}
+
+body:has(#theme-aurora:checked) .overlay {
+  background: rgba(237, 242, 249, 0.75);
+}
+
+.overlay-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 30px;
+}
+
+.overlay-title {
+  font-family: var(--font-family-title), sans-serif;
+  font-size: 2.5rem;
+  letter-spacing: 5px;
+  font-weight: 700;
+}
+
+body:has(#theme-retro:checked) .overlay-title {
+  font-size: 4rem;
+}
+
+.winner-text {
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  color: var(--neutral-glow);
+  text-transform: uppercase;
+}
+
+body:has(#theme-retro:checked) .winner-text {
+  font-size: 1.3rem;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.win-x-title, .win-x-text,
+.win-o-title, .win-o-text {
+  display: none;
+}
+
+/* X Wins overlay selectors */
+#cell-1-x:checked ~ #cell-2-x:checked ~ #cell-3-x:checked ~ .board-ui .win-overlay,
+#cell-4-x:checked ~ #cell-5-x:checked ~ #cell-6-x:checked ~ .board-ui .win-overlay,
+#cell-7-x:checked ~ #cell-8-x:checked ~ #cell-9-x:checked ~ .board-ui .win-overlay,
+#cell-1-x:checked ~ #cell-4-x:checked ~ #cell-7-x:checked ~ .board-ui .win-overlay,
+#cell-2-x:checked ~ #cell-5-x:checked ~ #cell-8-x:checked ~ .board-ui .win-overlay,
+#cell-3-x:checked ~ #cell-6-x:checked ~ #cell-9-x:checked ~ .board-ui .win-overlay,
+#cell-1-x:checked ~ #cell-5-x:checked ~ #cell-9-x:checked ~ .board-ui .win-overlay,
+#cell-3-x:checked ~ #cell-5-x:checked ~ #cell-7-x:checked ~ .board-ui .win-overlay {
+  display: flex;
+}
+
+#cell-1-x:checked ~ #cell-2-x:checked ~ #cell-3-x:checked ~ .board-ui .win-overlay .win-x-title,
+#cell-4-x:checked ~ #cell-5-x:checked ~ #cell-6-x:checked ~ .board-ui .win-overlay .win-x-title,
+#cell-7-x:checked ~ #cell-8-x:checked ~ #cell-9-x:checked ~ .board-ui .win-overlay .win-x-title,
+#cell-1-x:checked ~ #cell-4-x:checked ~ #cell-7-x:checked ~ .board-ui .win-overlay .win-x-title,
+#cell-2-x:checked ~ #cell-5-x:checked ~ #cell-8-x:checked ~ .board-ui .win-overlay .win-x-title,
+#cell-3-x:checked ~ #cell-6-x:checked ~ #cell-9-x:checked ~ .board-ui .win-overlay .win-x-title,
+#cell-1-x:checked ~ #cell-5-x:checked ~ #cell-9-x:checked ~ .board-ui .win-overlay .win-x-title,
+#cell-3-x:checked ~ #cell-5-x:checked ~ #cell-7-x:checked ~ .board-ui .win-overlay .win-x-title {
+  display: block;
+  color: var(--cyan);
+  text-shadow: 0 0 20px rgba(var(--cyan-rgb), 0.6);
+}
+
+#cell-1-x:checked ~ #cell-2-x:checked ~ #cell-3-x:checked ~ .board-ui .win-overlay .win-x-text,
+#cell-4-x:checked ~ #cell-5-x:checked ~ #cell-6-x:checked ~ .board-ui .win-overlay .win-x-text,
+#cell-7-x:checked ~ #cell-8-x:checked ~ #cell-9-x:checked ~ .board-ui .win-overlay .win-x-text,
+#cell-1-x:checked ~ #cell-4-x:checked ~ #cell-7-x:checked ~ .board-ui .win-overlay .win-x-text,
+#cell-2-x:checked ~ #cell-5-x:checked ~ #cell-8-x:checked ~ .board-ui .win-overlay .win-x-text,
+#cell-3-x:checked ~ #cell-6-x:checked ~ #cell-9-x:checked ~ .board-ui .win-overlay .win-x-text,
+#cell-1-x:checked ~ #cell-5-x:checked ~ #cell-9-x:checked ~ .board-ui .win-overlay .win-x-text,
+#cell-3-x:checked ~ #cell-5-x:checked ~ #cell-7-x:checked ~ .board-ui .win-overlay .win-x-text {
+  display: block;
+}
+
+/* O Wins overlay selectors */
+#cell-1-o:checked ~ #cell-2-o:checked ~ #cell-3-o:checked ~ .board-ui .win-overlay,
+#cell-4-o:checked ~ #cell-5-o:checked ~ #cell-6-o:checked ~ .board-ui .win-overlay,
+#cell-7-o:checked ~ #cell-8-o:checked ~ #cell-9-o:checked ~ .board-ui .win-overlay,
+#cell-1-o:checked ~ #cell-4-o:checked ~ #cell-7-o:checked ~ .board-ui .win-overlay,
+#cell-2-o:checked ~ #cell-5-o:checked ~ #cell-8-o:checked ~ .board-ui .win-overlay,
+#cell-3-o:checked ~ #cell-6-o:checked ~ #cell-9-o:checked ~ .board-ui .win-overlay,
+#cell-1-o:checked ~ #cell-5-o:checked ~ #cell-9-o:checked ~ .board-ui .win-overlay,
+#cell-3-o:checked ~ #cell-5-o:checked ~ #cell-7-o:checked ~ .board-ui .win-overlay {
+  display: flex;
+}
+
+#cell-1-o:checked ~ #cell-2-o:checked ~ #cell-3-o:checked ~ .board-ui .win-overlay .win-o-title,
+#cell-4-o:checked ~ #cell-5-o:checked ~ #cell-6-o:checked ~ .board-ui .win-overlay .win-o-title,
+#cell-7-o:checked ~ #cell-8-o:checked ~ #cell-9-o:checked ~ .board-ui .win-overlay .win-o-title,
+#cell-1-o:checked ~ #cell-4-o:checked ~ #cell-7-o:checked ~ .board-ui .win-overlay .win-o-title,
+#cell-2-o:checked ~ #cell-5-o:checked ~ #cell-8-o:checked ~ .board-ui .win-overlay .win-o-title,
+#cell-3-o:checked ~ #cell-6-o:checked ~ #cell-9-o:checked ~ .board-ui .win-overlay .win-o-title,
+#cell-1-o:checked ~ #cell-5-o:checked ~ #cell-9-o:checked ~ .board-ui .win-overlay .win-o-title,
+#cell-3-o:checked ~ #cell-5-o:checked ~ #cell-7-o:checked ~ .board-ui .win-overlay .win-o-title {
+  display: block;
+  color: var(--pink);
+  text-shadow: 0 0 20px rgba(var(--pink-rgb), 0.6);
+}
+
+#cell-1-o:checked ~ #cell-2-o:checked ~ #cell-3-o:checked ~ .board-ui .win-overlay .win-o-text,
+#cell-4-o:checked ~ #cell-5-o:checked ~ #cell-6-o:checked ~ .board-ui .win-overlay .win-o-text,
+#cell-7-o:checked ~ #cell-8-o:checked ~ #cell-9-o:checked ~ .board-ui .win-overlay .win-o-text,
+#cell-1-o:checked ~ #cell-4-o:checked ~ #cell-7-o:checked ~ .board-ui .win-overlay .win-o-text,
+#cell-2-o:checked ~ #cell-5-o:checked ~ #cell-8-o:checked ~ .board-ui .win-overlay .win-o-text,
+#cell-3-o:checked ~ #cell-6-o:checked ~ #cell-9-o:checked ~ .board-ui .win-overlay .win-o-text,
+#cell-1-o:checked ~ #cell-5-o:checked ~ #cell-9-o:checked ~ .board-ui .win-overlay .win-o-text,
+#cell-3-o:checked ~ #cell-5-o:checked ~ #cell-7-o:checked ~ .board-ui .win-overlay .win-o-text {
+  display: block;
+}
+
+/* Draw overlay triggers when 9 checks exist */
+input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ input[name^='cell-']:checked ~ .board-ui .draw-overlay {
+  display: flex;
+}
+
+/* Hide Draw Overlay if 9th move was a win */
+#cell-1-x:checked ~ #cell-2-x:checked ~ #cell-3-x:checked ~ .board-ui .draw-overlay,
+#cell-4-x:checked ~ #cell-5-x:checked ~ #cell-6-x:checked ~ .board-ui .draw-overlay,
+#cell-7-x:checked ~ #cell-8-x:checked ~ #cell-9-x:checked ~ .board-ui .draw-overlay,
+#cell-1-x:checked ~ #cell-4-x:checked ~ #cell-7-x:checked ~ .board-ui .draw-overlay,
+#cell-2-x:checked ~ #cell-5-x:checked ~ #cell-8-x:checked ~ .board-ui .draw-overlay,
+#cell-3-x:checked ~ #cell-6-x:checked ~ #cell-9-x:checked ~ .board-ui .draw-overlay,
+#cell-1-x:checked ~ #cell-5-x:checked ~ #cell-9-x:checked ~ .board-ui .draw-overlay,
+#cell-3-x:checked ~ #cell-5-x:checked ~ #cell-7-x:checked ~ .board-ui .draw-overlay,
+#cell-1-o:checked ~ #cell-2-o:checked ~ #cell-3-o:checked ~ .board-ui .draw-overlay,
+#cell-4-o:checked ~ #cell-5-o:checked ~ #cell-6-o:checked ~ .board-ui .draw-overlay,
+#cell-7-o:checked ~ #cell-8-o:checked ~ #cell-9-o:checked ~ .board-ui .draw-overlay,
+#cell-1-o:checked ~ #cell-4-o:checked ~ #cell-7-o:checked ~ .board-ui .draw-overlay,
+#cell-2-o:checked ~ #cell-5-o:checked ~ #cell-8-o:checked ~ .board-ui .draw-overlay,
+#cell-3-o:checked ~ #cell-6-o:checked ~ #cell-9-o:checked ~ .board-ui .draw-overlay,
+#cell-1-o:checked ~ #cell-5-o:checked ~ #cell-9-o:checked ~ .board-ui .draw-overlay,
+#cell-3-o:checked ~ #cell-5-o:checked ~ #cell-7-o:checked ~ .board-ui .draw-overlay {
+  display: none !important;
+}
+
+
+/* ====================================================
+   Reset & Interactive Button Styles
+   ==================================================== */
+.neon-btn {
+  font-family: var(--font-family-title), sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  padding: 12px 32px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-color);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+body:has(#theme-retro:checked) .neon-btn {
+  font-size: 1.4rem;
+  border: 1px solid var(--cyan);
+  background: rgba(57, 255, 20, 0.05);
+}
+
+.win-overlay .neon-btn {
+  border: 1px solid rgba(var(--cyan-rgb), 0.5);
+  box-shadow: 0 0 10px rgba(var(--cyan-rgb), 0.15), 0 0 20px rgba(var(--pink-rgb), 0.15), inset 0 0 10px rgba(var(--cyan-rgb), 0.1);
+  background: linear-gradient(90deg, rgba(var(--cyan-rgb), 0.08), rgba(var(--pink-rgb), 0.08));
+}
+
+.win-overlay .neon-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  border-color: #fff;
+  box-shadow: 0 0 15px rgba(var(--cyan-rgb), 0.5), 0 0 30px rgba(var(--pink-rgb), 0.5), inset 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+.draw-overlay .neon-btn {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+body:has(#theme-aurora:checked) .draw-overlay .neon-btn {
+  border-color: rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.draw-overlay .neon-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  border-color: var(--text-color);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 20px rgba(var(--cyan-rgb), 0.1);
+}
+
+body:has(#theme-aurora:checked) .draw-overlay .neon-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.board-reset-btn {
+  font-family: var(--font-family-body), sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  color: var(--neutral-glow);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  padding: 8px 20px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+
+body:has(#theme-aurora:checked) .board-reset-btn {
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+body:has(#theme-retro:checked) .board-reset-btn {
+  font-size: 1.2rem;
+  border-color: rgba(var(--cyan-rgb), 0.15);
+}
+
+.board-reset-btn:hover {
+  color: var(--text-color);
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+body:has(#theme-aurora:checked) .board-reset-btn:hover {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.board-reset-btn .icon {
+  font-size: 1rem;
+  transition: transform 0.4s ease;
+}
+
+.board-reset-btn:hover .icon {
+  transform: rotate(-180deg);
+}
+
+/* ====================================================
+   Responsive Styles
+   ==================================================== */
+@media (max-width: 480px) {
+  .main-title { font-size: 1.8rem; }
+  body:has(#theme-retro:checked) .main-title { font-size: 2.8rem; }
+  .mark { font-size: 2.6rem; }
+  body:has(#theme-retro:checked) .mark { font-size: 3.5rem; }
+  .overlay-title { font-size: 2rem; }
+  body:has(#theme-retro:checked) .overlay-title { font-size: 3rem; }
+  .scoreboard { padding: 10px 14px; }
+}
